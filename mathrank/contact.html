@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MathRank</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="style.css" />
+	<!--<link rel="stylesheet" href="star.css" />-->
+
+	<!-- Favicons AND TOUCH ICONS   -->
+	<link rel="icon" href="logo32.ico">
+	<link rel="apple-touch-icon" href="logo32.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="logo.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="logo114.png">
+
+	<link rel='stylesheet' href='bootstrap.min.css'>
+	<link rel='stylesheet' href='vendor.css'>
+	<link rel='stylesheet' href='custom.css'> <!-- custom style -->
+	<script src="jquery-1.12.2.min.js"></script>
+	<script src="main.js"></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.3.17.min.js"></script>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<script>
+	var $ = jQuery.noConflict();
+
+	(function($, document, window, viewport) {
+
+		'use strict';
+
+	//
+	// global variable
+	// --------------------------------------------------
+	//
+
+		var $html = $('html');
+		var $body = $('body');
+
+	//
+	// ie10 viewport fix
+	// --------------------------------------------------
+	//
+
+		(function() {
+			'use strict';
+			if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+				var msViewportStyle = document.createElement('style')
+				msViewportStyle.appendChild(
+					document.createTextNode(
+						'@-ms-viewport{width:auto!important}'
+					)
+				)
+				document.querySelector('head').appendChild(msViewportStyle)
+			}
+		})();
+
+	//
+	// device detect
+	// --------------------------------------------------
+	//
+
+		if ($html.hasClass('desktop')) {
+			$html.addClass('is-desktop');
+			var isMobile = false;
+			var isDesktop = true;
+		} else {
+			$html.addClass('is-mobile');
+			var isMobile = true;
+			var isDesktop = false;
+		}
+		if ($html.hasClass('ie9')) {
+			var isIE9 = true;
+		}
+
+
+
+	//
+	// equal height
+	// --------------------------------------------------
+	//
+
+		function fn_equalHeight() {
+			$('[data-equal-height="1"]').matchHeight({});
+			$('[data-equal-height="2"]').matchHeight({});
+			$('[data-equal-height="3"]').matchHeight({});
+		}
+
+		$(window).on('load', function() {
+			fn_equalHeight();
+		});
+
+	//
+	// contact
+	// --------------------------------------------------
+	//
+
+		function fn_contact() {
+			var $form = $('#contactForm');
+			var $formNotify = $form.find('.form-notify');
+
+			$form.validate({
+				onfocusout: false,
+				onkeyup: false,
+				onclick: false,
+				rules: {
+					name: {
+						required: true
+					},
+					email: {
+						required: true,
+						email: true
+					},
+					message: {
+						required: true
+					}
+				},
+				messages: {
+					//name: 'Enter your name',
+					//email: 'Enter your email address',
+					//message: 'Enter message'
+				},
+				errorPlacement: function(error, element) {},
+				highlight: function(element) {
+					$(element).parent('.form-group').addClass('error');
+				},
+				unhighlight: function(element) {
+					$(element).parent('.form-group').removeClass('error');
+				},
+				submitHandler: function(form) {
+					$(form).ajaxSubmit({
+						type: 'POST',
+						url: 'contact.php',
+						dataType: 'json',
+						cache: false,
+						data: $form.serialize(),
+						success: function(data) {
+							if (data.code == 0) {
+								$form.validate().resetForm();
+								$form[0].reset();
+								$form.find('.form-label').removeClass('error');
+								$form.find('button').blur();
+								$formNotify.removeClass('valid error').addClass('valid').html(data.message).show();
+							} else {
+								$formNotify.removeClass('valid error').addClass('error').html(data.message).show();
+							}
+						},
+						error: function(data) {
+							$formNotify.removeClass('valid').addClass('error').html('An error occurred. Please try again later.').show();
+						},
+					});
+				},
+				invalidHandler: function(event, validator) {
+					var errors = validator.numberOfInvalids();
+					if (errors) {
+						var message = errors == 1
+							? 'You missed 1 field. It has been highlighted.'
+							: 'You missed ' + errors + ' fields. They have been highlighted.';
+						$formNotify.removeClass('valid error').addClass('error').html(message).show();
+					}
+				}
+			});
+		}
+		fn_contact();
+
+	})(jQuery, document, window, ResponsiveBootstrapToolkit);
+</script>
+</head>
+
+<!--HEADER-->
+<header class="site-header text-light">
+	<div class="site-header-container container">
+		<div class="site-header-brand">
+			<a href="index.html">
+			<img class="site-header-brand-img" src="logo.png" alt="">
+		</div> <!-- .site-header-brand -->
+
+		<nav class="site-header-nav">
+			<div class="primary-menu">
+				<ul class="primary-menu-list nav">
+					<li class="primary-menu-item">
+						<a href="index.html"><span></span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="index.html"><span>Home</span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="features.html"><span>Features</span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="about.html"><span>About</span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="help.html"><span>Help</span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="contact.html"><span>Contact</span></a>
+					</li>
+			
+				</ul>
+			</div> <!-- .primary-menu -->
+
+		</nav> <!-- .site-header-nav -->
+	</div>
+</header> <!-- .site-header -->
+
+<!--BODY-->
+<body>
+	<br><br><br><br><br><br><br><br>
+	<h1 class="title text-center">Contact</h1>
+	<p>
+		We'll do our best to get back to you within 24 hours. Suggestions are welcome and all feedback is completely confidential.
+	</p>
+
+	<div id="contact" class="section">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12">
+					<form class="form-theme max-width-960" id="contactForm" novalidate="novalidate">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group required">
+									<label class="form-label" for="contactName">Name</label>
+									<input class="form-control" id="contactName" type="text" name="name">
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group required">
+									<label class="form-label" for="contactEmail">Email</label>
+									<input class="form-control" id="contactEmail" type="text" name="email">
+								</div>
+							</div>
+						</div>
+						<div class="form-group required">
+							<label class="form-label" for="contactMessage">Message</label>
+							<textarea class="form-control" id="contactMessage" rows="5" name="message"></textarea>
+						</div>
+						<button type="submit" class="btn _theme">
+							<span>Send Message</span>
+							<i class="ion-forward"></i>
+						</button>
+						<div class="form-notify"></div>
+					</form> <!-- #contactForm -->
+				</div>
+			</div>
+		</div>
+	</div> <!-- #contact -->
+</body>
+
+<!-- Footer -->
+<footer id="footer">
+		<p>&copy; Nathan Mueller. All rights reserved. <a href="http://onenathan.zone">ONENATHAN</a>.</p>
+</footer>
+</html>

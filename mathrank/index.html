@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MathRank</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="style.css" />
+
+	<!-- Favicons AND TOUCH ICONS   -->
+	<link rel="icon" href="logo32.ico">
+	<link rel="apple-touch-icon" href="logo32.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="logo.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="logo114.png">
+
+	<!--<link rel="stylesheet" href="star.css" />-->
+	<link rel='stylesheet' href='bootstrap.min.css'>
+	<link rel='stylesheet' href='vendor.css'>
+	<link rel='stylesheet' href='custom.css'> <!-- custom style -->
+	<script src="jquery-1.12.2.min.js"></script>
+	<script src="main.js"></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.3.17.min.js"></script>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+
+<!--HEADER-->
+<header class="site-header text-light">
+	<div class="site-header-container container">
+		<div class="site-header-brand">
+			<a href="index.html">
+			<img class="site-header-brand-img" src="logo.png" alt="">
+		</div> <!-- .site-header-brand -->
+
+		<nav class="site-header-nav">
+			<div class="primary-menu">
+				<ul class="primary-menu-list nav">
+					<li class="primary-menu-item">
+						<a href="index.html"><span></span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="index.html"><span>Home</span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="features.html"><span>Features</span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="about.html"><span>About</span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="help.html"><span>Help</span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="contact.html"><span>Contact</span></a>
+					</li>
+					<!--
+					<li class="primary-menu-item">
+						<a href="#signin"><span>Sign In</span></a>
+					</li>
+					<li class="primary-menu-item">
+						<a href="#signup"><span>Sign Up</span></a>
+					</li>
+				-->
+				</ul>
+			</div> <!-- .primary-menu -->
+
+		</nav> <!-- .site-header-nav -->
+	</div>
+</header> <!-- .site-header -->
+
+<!--BODY-->
+<body>
+	<div id="login">
+		<br><br><br><br><br><br><br><br>
+		<input id="clickMe" class="clickMe" type="button" value="Multiplication Tables" onclick="openZero();" />
+		<input id="clickMe" class="clickMe" type="button" value="Addition" onclick="openOne();" />
+		<input id="clickMe" class="clickMe" type="button" value="Subtraction" onclick="openTwo();" />
+		<input id="clickMe" class="clickMe" type="button" value="Multiplication" onclick="openThree();" />
+		<input id="clickMe" class="clickMe" type="button" value="Division" onclick="openFour();" />
+	</div>
+	<script>
+		function openZero() {
+				window.open("mathQuestions.html");
+		}
+		function openOne() {
+				window.open("mathQuestions1.html");
+		}
+		function openTwo() {
+				window.open("mathQuestions2.html");
+		}
+		function openThree() {
+				window.open("mathQuestions3.html");
+		}
+		function openFour() {
+				window.open("mathQuestions4.html");
+		}
+	</script>
+<!--
+	<div id="login">
+		<form>
+		  Class ID:<br>
+		  <input type="text" id="classID"><br>
+		  Student Name:<br>
+		  <input type="text" id="name">
+		</form>
+		<input id="clickMe" class="clickMe" type="button" value="Login" onclick="login();" />
+
+		<script type="text/javascript">
+
+			function login() {
+
+				var params = {
+    			IdentityPoolId: "us-east-1_Vhrvyt22z"
+				};
+
+				AWS.config.update({region: "us-east-1"});
+
+				AWS.config.credentials = new AWS.CognitoIdentityCredentials(params);
+
+				// We can set the get method of the Credentials object to retrieve
+				// the unique identifier for the end user (identityId) once the provider
+				// has refreshed itself
+				AWS.config.credentials.get(function(err) {
+				    if (err) {
+				        console.log("Error: "+err);
+				        return;
+				    }
+				    console.log("Cognito Identity Id: " + AWS.config.credentials.identityId);
+
+				    // Other service clients will automatically use the Cognito Credentials provider
+				    // configured in the JavaScript SDK.
+				    var cognitoSyncClient = new AWS.CognitoSync();
+				    cognitoSyncClient.listDatasets({
+				        IdentityId: AWS.config.credentials.identityId,
+				        IdentityPoolId: "us-east-1_Vhrvyt22z"
+				    }, function(err, data) {
+				        if ( !err ) {
+				            console.log(JSON.stringify(data));
+				        }
+				    });
+				});
+
+
+
+				//var docClient = new DOC.DynamoDB();
+
+				// assumes AWS.config is set up already
+				//var awsClient = new AWS.DynamoDB();
+				//var docClient = new DOC.DynamoDB(awsClient);
+
+				//AWS.config.credentials =
+
+				//get values of text fields
+				//var classID = document.getElementById("classID").value;
+				//var name = document.getElementById("name").value;
+
+				//AWS.config.update({accessKeyId: 'akid', secretAccessKey: 'secret'});
+/*
+				//kind of a test thing
+				awsClient.listTables(function(err, data) {
+  				console.log(awsClient.TableNames);
+				});
+
+				//set up params for DynamoDB call
+/*
+
+
+				var params = {
+						Key: {
+								"ID": name,
+								"class": classID
+						},
+				    TableName: "people"
+
+				};
+
+				var dynamodb = new AWS.DynamoDB();
+				dynamodb.getItem(params, function (err, data) {
+				  if (err) console.log(err, err.stack); // an error occurred
+				  else     console.log(data);           // successful response
+				});
+
+/*
+				//make call
+				awsClient.get(params, function(err, data) {
+				    if (err)
+				        console.log(JSON.stringify(err, null, 2));
+				    else
+				        console.log(JSON.stringify(data, null, 2));
+								alert(JSON.stringify(data, null, 2));
+				});
+				*/
+
+			}
+
+		</script>
+
+		<br>
+		<p> - or - <p>
+			<br>
+		<input id="clickMe" class="clickMe" type="button" value="New Class" onclick="" />
+	</div>
+-->
+</body>
+
+<!-- Footer -->
+<footer id="footer">
+		<p>&copy; Nathan Mueller. All rights reserved. <a href="http://onenathan.zone">ONENATHAN</a>.</p>
+	<!--	<a href="https://twitter.com/c0rv0s" class="icon style2 fa-twitter"><span class="label">Twitter</span></a> -->
+</footer>
+</html>
