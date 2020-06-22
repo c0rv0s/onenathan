@@ -1466,7 +1466,9 @@
 
 	body {
 		background-color: #000;
-		background-image: url("../../images/bg2.jpg");
+		/* background-image: url("../../images/bg2.jpg"); */
+		background: rgb(219,219,219);
+		background: radial-gradient(circle, rgba(219,219,219,1) 0%, rgba(241,241,241,1) 83%, rgba(219,219,219,1) 100%);
 		background-size: cover;
 		background-position: top center;
 	}
