@@ -1619,7 +1619,7 @@
 
 	code {
 		background: rgba(255, 255, 255, 0.075);
-		border-radius: 4px;
+		border-radius: 16px;
 		border: solid 1px rgba(255, 255, 255, 0.25);
 		font-family: "Courier New", monospace;
 		font-size: 0.9em;
@@ -1717,7 +1717,7 @@
 		-ms-appearance: none;
 		appearance: none;
 		background: rgba(0, 0, 0, 0.075);
-		border-radius: 4px;
+		border-radius: 16px;
 		border: none;
 		border: solid 1px rgba(0, 0, 0, 0.25);
 		color: inherit;
@@ -1831,7 +1831,7 @@
 			input[type="checkbox"] + label:before,
 			input[type="radio"] + label:before {
 				background: rgba(255, 255, 255, 0.075);
-				border-radius: 4px;
+				border-radius: 16px;
 				border: solid 1px rgba(255, 255, 255, 0.25);
 				content: '';
 				display: inline-block;
@@ -1859,7 +1859,7 @@
 		}
 
 	input[type="checkbox"] + label:before {
-		border-radius: 4px;
+		border-radius: 16px;
 	}
 
 	input[type="radio"] + label:before {
@@ -1894,7 +1894,7 @@
 /* Box */
 
 	.box {
-		border-radius: 4px;
+		border-radius: 16px;
 		border: solid 1px rgba(255, 255, 255, 0.25);
 		margin-bottom: 2em;
 		padding: 1.5em;
@@ -1968,14 +1968,14 @@
 /* Image */
 
 	.image {
-		border-radius: 4px;
+		border-radius: 16px;
 		border: 0;
 		display: inline-block;
 		position: relative;
 	}
 
 		.image img {
-			border-radius: 4px;
+			border-radius: 16px;
 			display: block;
 		}
 
@@ -2272,7 +2272,7 @@
 		-ms-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 		transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 		background-color: #FF6382;
-		border-radius: 4px;
+		border-radius: 16px;
 		border: 0;
 		color: !important;
 		cursor: pointer;
@@ -2456,7 +2456,7 @@
 			width: 100%;
 			margin: 0 0 2em 0;
 			text-align: center;
-			border-radius: 4px;
+			border-radius: 16px;
 			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
 			background-color: rgba(0, 0, 0, 0.075);
 			cursor: pointer;
@@ -2467,8 +2467,8 @@
 			.thumbnails a img {
 				display: block;
 				width: 100%;
-				border-top-left-radius: 4px;
-				border-top-right-radius: 4px;
+				border-top-left-radius: 16px;
+				border-top-right-radius: 16px;
 			}
 
 			.thumbnails a h3 {
