@@ -2806,3 +2806,7 @@ body.is-covered #wrapper {
     padding: 2em 0 2em 0;
   }
 }
+
+.lens-icon {
+  top: 22px;
+}
