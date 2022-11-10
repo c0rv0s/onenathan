@@ -2823,3 +2823,14 @@ body.is-covered #wrapper {
     width: 20px;
   }
 }
+
+@media screen and (min-width: 1281px) {
+  .lens-icon {
+    padding: 0.56em 0.52em 0.14em 0.52em !important;
+  }
+
+  .lens-image {
+    height: 39px;
+    width: 39px;
+  }
+}
