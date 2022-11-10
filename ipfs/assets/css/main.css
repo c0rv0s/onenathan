@@ -2810,3 +2810,11 @@ body.is-covered #wrapper {
 .lens-icon {
   top: 22px;
 }
+
+@media screen and (max-width: 736px) {
+  .lens-icon {
+    height: 38px;
+    width: 38px;
+    top: 13px;
+  }
+}
