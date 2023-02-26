@@ -1633,7 +1633,7 @@ body {
 }
 
 body {
-  background-image: url("https://images.unsplash.com/photo-1521235471678-c093499ca824?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1534&q=80");
+  background-image: url("../../images/grid_0.png");
   background-size: cover;
   background-position: top center;
 }
@@ -2724,8 +2724,8 @@ button:disabled,
 /* Wrapper */
 
 #wrapper {
-  background: rgba(0, 0, 0, 0.5);
-  box-shadow: 0px 0px 44px -12px rgba(0, 0, 0, 1);
+  background: rgba(0, 0, 0, 0.65);
+  box-shadow: 0px 0px 44px rgba(0, 0, 0, 1);
   max-width: 68em;
   width: 100%;
   margin: 0 auto;
