@@ -16,7 +16,7 @@
 
         <!-- Theme Switcher -->
         <div class="theme-switcher">
-            <button class="theme-btn active" data-theme="aqua" title="Aquamarine">◆</button>
+            <button class="theme-btn" data-theme="aqua" title="Aquamarine">◆</button>
             <button class="theme-btn" data-theme="matrix" title="Matrix">◆</button>
             <button class="theme-btn" data-theme="hyper" title="Synthwave">◆</button>
         </div>
@@ -76,6 +76,9 @@
                     </a>
                     <a href="https://twitter.com/c0rv0s" class="terminal-link" target="_blank">
                         <i class="fa fa-twitter"></i> Twitter
+                    </a>
+                    <a href="https://farcaster.xyz/c0rv0s" class="terminal-link" target="_blank">
+                        <i class="fa fa-comments"></i> Farcaster
                     </a>
                     <a href="https://t.me/c0rv0s" class="terminal-link" target="_blank">
                         <i class="fa fa-paper-plane"></i> Telegram
@@ -146,6 +149,9 @@
             // Load saved theme or default to aqua
             const savedTheme = localStorage.getItem('portfolio-theme') || 'aqua';
             body.setAttribute('data-theme', savedTheme);
+            
+            // Update button states on load
+            themeButtons.forEach(b => b.classList.remove('active'));
             document.querySelector(`[data-theme="${savedTheme}"]`).classList.add('active');
             
             themeButtons.forEach(btn => {
