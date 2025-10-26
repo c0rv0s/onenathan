@@ -17,10 +17,10 @@
         <!-- Terminal Wrapper -->
         <div id="terminal">
             <div class="terminal-header">
-                <span class="terminal-button close"></span>
-                <span class="terminal-button minimize"></span>
-                <span class="terminal-button maximize"></span>
-                <span class="terminal-title">c0rv0s@onchain:~$</span>
+                <span class="terminal-button close" title="Close"></span>
+                <span class="terminal-button minimize" title="Minimize"></span>
+                <span class="terminal-button maximize" title="Maximize"></span>
+                <span class="terminal-title">c0rv0s.eth:~$</span>
             </div>
             
             <div class="terminal-body">
@@ -36,25 +36,27 @@
                         <span class="prompt">$</span> Smart Contract Engineer <span class="cursor">_</span>
                     </p>
                     <p class="description">
-                        Building the onchain future | Recent projects include Imagine, Bonsai, and ZSTR
+                        Previously: <a href="https://www.dorg.tech/" target="_blank" rel="noopener noreferrer">dOrg</a>, 
+                        <a href="https://hypotenuselabs.com/" target="_blank" rel="noopener noreferrer">Hype Labs</a>, 
+                        <a href="https://onbons.ai/" target="_blank" rel="noopener noreferrer">Bonsai</a> | Recently experimenting in onchain social
                     </p>
                 </div>
 
                 <!-- Projects Grid -->
                 <div class="projects-grid">
                     <a href="https://www.zorastrategy.fun/" class="project-card" target="_blank">
-                        <div class="project-label">[ZSTR.sol]</div>
+                        <div class="project-label">[ZSTR]</div>
                         <div class="project-desc">First onchain treasury strategy for creator coin ecosystem</div>
                     </a>
                     
                     <a href="https://www.getimagine.club/" class="project-card" target="_blank">
-                        <div class="project-label">[IMAGINE.sol]</div>
+                        <div class="project-label">[IMAGINE]</div>
                         <div class="project-desc">Swap-to-generate mini app for Base/Zora with Sora 2</div>
                     </a>
                     
                     <a href="https://launch.onbons.ai/" class="project-card" target="_blank">
-                        <div class="project-label">[BONSAI.sol]</div>
-                        <div class="project-desc">Lens Chain launchpad with advanced price modeling</div>
+                        <div class="project-label">[IASNOB]</div>
+                        <div class="project-desc">LTS evolution of Bonsai. Lens Chain launchpad with social features</div>
                     </a>
                 </div>
 
@@ -91,7 +93,8 @@
                 ctx.fillStyle = 'rgba(248, 255, 254, 0.05)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                ctx.fillStyle = '#40E0D0';
+                // Brighter aquamarine color
+                ctx.fillStyle = 'rgba(64, 224, 208, 0.8)';
                 ctx.font = fontSize + 'px monospace';
                 
                 for (let i = 0; i < drops.length; i++) {
