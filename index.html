@@ -1,72 +1,116 @@
 <!DOCTYPE HTML>
-<!--
-Visualize by TEMPLATED
-templated.co @templatedco
-Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
--->
 <html>
     <head>
-        <title>Nate</title>
+        <title>c0rv0s.eth</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="assets/css/main.css" />
-        <!-- Scripts -->
-        <!-- <script src="assets/js/skel.min.js"></script>
-        <script src="assets/js/main.js"></script> -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/8c1314c084.js" crossorigin="anonymous"></script>
     </head>
     <body>
+        <!-- Matrix Rain Background -->
+        <canvas id="matrix"></canvas>
 
-        <!-- Wrapper -->
-        <div id="wrapper">
+        <!-- Terminal Wrapper -->
+        <div id="terminal">
+            <div class="terminal-header">
+                <span class="terminal-button close"></span>
+                <span class="terminal-button minimize"></span>
+                <span class="terminal-button maximize"></span>
+                <span class="terminal-title">c0rv0s@onchain:~$</span>
+            </div>
             
-            <!-- Header -->
-            <header id="header">
-                <span class="avatar"><img src="images/crop.jpeg" alt="avatar" /></span>
-                <h1>Nate Mueller</h1>
-                <h2>
-                    Onchain builder accelerating the onchain future
-                <h2>
-                <h2>
-                    Recently building for crypto social.
-                <h2>
-                <br />
-                <ul class="icons">
-                    <li><a href="https://github.com/c0rv0s" class="icon style2 fa-github"><span class="label">GitHub</span></a></li>
-                    <li><a href="https://twitter.com/c0rv0s" class="icon style2 fa-twitter"><span class="label">Twitter</span></a></li>
-                    <li><a href="https://t.me/c0rv0s" class="icon style2 fa-paper-plane"><span class="label">Telegram</span></a></li>
-                </ul>
-            </header>
-            
-            <!-- Main -->
-            <section id="main">
-                <!-- Thumbnails -->
-                <section class="thumbnails">
-                    <div>
-                        <a href="https://launch.onbons.ai/">
-                            <img src="images/thumbs/bonsai.png" alt="bonsai" />
-                            <h3>Bonsai (IASNOB) is the first launchpad for Lens Chain where anyone can create a token and have it graduate to Uniswap with custom v4 hook integrations</h3>
-                        </a>
-                    </div>
-                    <div>
-                        <a href="https://www.zorastrategy.fun/">
-                            <img src="images/thumbs/zstr.jpg" alt="zstr" />
-                            <h3>Zora Strategy is the first onchain treasury strategy for the growing creator coin ecosystem</h3>
-                        </a>
-                    </div>
-                    <div>
-                        <a href="https://www.getimagine.club/">
-                            <img src="images/thumbs/imagine.jpg" alt="imagine" />
-                            <h3>Imagine is the first swap to generate mini app for Base/Zora where buying a content coin lets you remix media with Sora 2</h3>
-                        </a>
-                    </div>
-                </section>
-            </section>
-            <!-- Footer -->
-            <footer id="footer">
-                <p>&copy; Nate M 2025+. <a href="https://templated.co" class="underlined">Design</a></p>
-            </footer>
+            <div class="terminal-body">
+                <!-- Avatar -->
+                <div class="avatar-container">
+                    <img src="images/bored.jpeg" alt="c0rv0s" class="terminal-avatar" />
+                </div>
 
+                <!-- Info -->
+                <div class="info-section">
+                    <h1 class="glitch" data-text="NATE MUELLER">NATE MUELLER</h1>
+                    <p class="subtitle">
+                        <span class="prompt">$</span> Smart Contract Engineer <span class="cursor">_</span>
+                    </p>
+                    <p class="description">
+                        Building the onchain future | Recent projects include Imagine, Bonsai, and ZSTR
+                    </p>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="projects-grid">
+                    <a href="https://www.zorastrategy.fun/" class="project-card" target="_blank">
+                        <div class="project-label">[ZSTR.sol]</div>
+                        <div class="project-desc">First onchain treasury strategy for creator coin ecosystem</div>
+                    </a>
+                    
+                    <a href="https://www.getimagine.club/" class="project-card" target="_blank">
+                        <div class="project-label">[IMAGINE.sol]</div>
+                        <div class="project-desc">Swap-to-generate mini app for Base/Zora with Sora 2</div>
+                    </a>
+                    
+                    <a href="https://launch.onbons.ai/" class="project-card" target="_blank">
+                        <div class="project-label">[BONSAI.sol]</div>
+                        <div class="project-desc">Lens Chain launchpad with advanced price modeling</div>
+                    </a>
+                </div>
+
+                <!-- Links -->
+                <div class="links-section">
+                    <a href="https://github.com/c0rv0s" class="terminal-link" target="_blank">
+                        <i class="fa fa-github"></i> GitHub
+                    </a>
+                    <a href="https://twitter.com/c0rv0s" class="terminal-link" target="_blank">
+                        <i class="fa fa-twitter"></i> Twitter
+                    </a>
+                    <a href="https://t.me/c0rv0s" class="terminal-link" target="_blank">
+                        <i class="fa fa-paper-plane"></i> Telegram
+                    </a>
+                </div>
+            </div>
         </div>
+
+        <script>
+            // Ancient Glyph rain animation
+            const canvas = document.getElementById('matrix');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // Ancient mystical glyphs: runes, alchemical symbols, astronomical symbols
+            const glyphs = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛝᛞᛟᛠᛡᛢᛣᛤᛥᛦᛧᛨᛩᛪ☉☽☿♀♁♂♃♄♅♆♇⚕⚚⚛⚜⚝⚞⚟⚡⚢⚣⚤⚥⚦⚧⚨⚩⚬⚭⚮⚯⚰⚱⚲⚳⚴⚵⚶⚷⚸⚹⚺⚻⚼✦✧✩✪✫✬✭✮✯✰✱✲✳✴✵✶✷✸✹✺✻✼✽✾✿❀❁❂❃❄❅❆❇❈❉❊❋●❍■□▢▣▤▥▦▧▨▩▪▫▬▭▮▯◆◇◈◉◊○◌◍◎●◐◑◒◓◔◕◖◗◘◙◚◛◜◝◞◟◠◡◢◣◤◥◦◧◨◩◪◫◬◭◮◯☀☁☂☃☄★☆☇☈☉☊☋☌☍☎☏☐☑☒☓☖☗☘☙☚☛☜☝☞☟☠☡☢☣☤☥☦☧☨☩☪☫☬☭☮☯☰☱☲☳☴☵☶☷☸☹☺☻☼☽☾☿♀♁♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓';
+            const fontSize = 18;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+
+            function drawGlyphs() {
+                ctx.fillStyle = 'rgba(248, 255, 254, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#40E0D0';
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = glyphs[Math.floor(Math.random() * glyphs.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(drawGlyphs, 40);
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        </script>
     </body>
 </html>
