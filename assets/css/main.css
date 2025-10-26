@@ -36,19 +36,19 @@ body[data-theme="matrix"] {
   --glow-color: rgba(0, 255, 65, 0.3);
 }
 
-/* Hyperlight Theme - Violet/Indigo (Dark) */
+/* Synthwave Theme - Retrowave/80s Neon */
 body[data-theme="hyper"] {
-  --primary-color: #BB86FC;
-  --secondary-color: #9370DB;
-  --accent-color: #E0C3FC;
-  --terminal-bg: rgba(30, 20, 50, 0.95);
-  --terminal-border: #BB86FC;
-  --text-primary: #E0C3FC;
-  --text-secondary: #BB86FC;
-  --text-muted: #9370DB;
-  --bg-color: #1a0f2e;
-  --button-color: #BB86FC;
-  --glow-color: rgba(187, 134, 252, 0.3);
+  --primary-color: #FF006E;
+  --secondary-color: #00F5FF;
+  --accent-color: #7209B7;
+  --terminal-bg: rgba(10, 0, 20, 0.95);
+  --terminal-border: #FF006E;
+  --text-primary: #00F5FF;
+  --text-secondary: #FF006E;
+  --text-muted: #FF00FF;
+  --bg-color: #0A0014;
+  --button-color: #FF006E;
+  --glow-color: rgba(255, 0, 110, 0.3);
 }
 
 /* Base Styles */
@@ -115,7 +115,7 @@ html, body {
 }
 
 .theme-btn[data-theme="hyper"] {
-  color: #8A2BE2;
+  color: #FF006E;
 }
 
 .theme-btn.active {

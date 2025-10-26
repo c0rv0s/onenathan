@@ -18,7 +18,7 @@
         <div class="theme-switcher">
             <button class="theme-btn active" data-theme="aqua" title="Aquamarine">◆</button>
             <button class="theme-btn" data-theme="matrix" title="Matrix">◆</button>
-            <button class="theme-btn" data-theme="hyper" title="Hyperlight">◆</button>
+            <button class="theme-btn" data-theme="hyper" title="Synthwave">◆</button>
         </div>
 
         <!-- Terminal Wrapper -->
@@ -107,8 +107,9 @@
                     bgFade = 'rgba(0, 0, 0, 0.05)';
                     glyphColor = 'rgba(0, 255, 65, 0.8)';
                 } else if (theme === 'hyper') {
-                    bgFade = 'rgba(26, 15, 46, 0.05)';
-                    glyphColor = 'rgba(187, 134, 252, 0.8)';
+                    bgFade = 'rgba(10, 0, 20, 0.05)';
+                    // Alternate between hot pink and cyan for that classic synthwave look
+                    glyphColor = Math.random() > 0.5 ? 'rgba(255, 0, 110, 0.8)' : 'rgba(0, 245, 255, 0.8)';
                 } else { // aqua
                     bgFade = 'rgba(248, 255, 254, 0.05)';
                     glyphColor = 'rgba(64, 224, 208, 0.8)';
