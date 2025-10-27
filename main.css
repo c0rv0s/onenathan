@@ -37,7 +37,7 @@ body[data-theme="matrix"] {
 }
 
 /* Synthwave Theme - Retrowave/80s Neon */
-body[data-theme="hyper"] {
+body[data-theme="synth"] {
   --primary-color: #FF006E;
   --secondary-color: #00F5FF;
   --accent-color: #7209B7;
@@ -114,7 +114,7 @@ html, body {
   color: #00ff41;
 }
 
-.theme-btn[data-theme="hyper"] {
+.theme-btn[data-theme="synth"] {
   color: #FF006E;
 }
 

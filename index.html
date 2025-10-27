@@ -1,239 +1,261 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>c0rv0s.eth</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="assets/css/main.css" />
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
-        <script src="https://kit.fontawesome.com/8c1314c084.js" crossorigin="anonymous"></script>
-    </head>
-    <body>
-        <!-- Matrix Rain Background -->
-        <canvas id="matrix"></canvas>
+  <head>
+    <title>Nate Mueller</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://kit.fontawesome.com/8c1314c084.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <!-- Matrix Rain Background -->
+    <canvas id="matrix"></canvas>
 
-        <!-- Theme Switcher -->
-        <div class="theme-switcher">
-            <button class="theme-btn" data-theme="aqua" title="Aquamarine">◆</button>
-            <button class="theme-btn" data-theme="matrix" title="Matrix">◆</button>
-            <button class="theme-btn" data-theme="hyper" title="Synthwave">◆</button>
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+      <button class="theme-btn" data-theme="aqua" title="Aquamarine">◆</button>
+      <button class="theme-btn" data-theme="matrix" title="Matrix">◆</button>
+      <button class="theme-btn" data-theme="synth" title="Synthwave">◆</button>
+    </div>
+
+    <!-- Terminal Wrapper -->
+    <div id="terminal">
+      <div class="terminal-header">
+        <span class="terminal-button close" title="Close"></span>
+        <span class="terminal-button minimize" title="Minimize"></span>
+        <span class="terminal-button maximize" title="Maximize"></span>
+        <span class="terminal-title">c0rv0s.eth:~$</span>
+      </div>
+
+      <div class="terminal-body">
+        <!-- Avatar -->
+        <div class="avatar-container">
+          <a
+            href="https://opensea.io/item/ethereum/0xafe12842e3703a3cc3a71d9463389b1bf2c5bc1c/2100"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="images/bored.jpeg" alt="c0rv0s" class="terminal-avatar" />
+          </a>
         </div>
 
-        <!-- Terminal Wrapper -->
-        <div id="terminal">
-            <div class="terminal-header">
-                <span class="terminal-button close" title="Close"></span>
-                <span class="terminal-button minimize" title="Minimize"></span>
-                <span class="terminal-button maximize" title="Maximize"></span>
-                <span class="terminal-title">c0rv0s.eth:~$</span>
-            </div>
-            
-            <div class="terminal-body">
-                <!-- Avatar -->
-                <div class="avatar-container">
-                    <a href="https://opensea.io/item/ethereum/0xafe12842e3703a3cc3a71d9463389b1bf2c5bc1c/2100" target="_blank" rel="noopener noreferrer">
-                        <img src="images/bored.jpeg" alt="c0rv0s" class="terminal-avatar" />
-                    </a>
-                </div>
-
-                <!-- Info -->
-                <div class="info-section">
-                    <h1 class="glitch" data-text="NATE MUELLER">NATE MUELLER</h1>
-                    <p class="subtitle">
-                        <span class="prompt">$</span> Smart Contract Engineer <span class="cursor">_</span>
-                    </p>
-                    <p class="description">
-                        Previously: <a href="https://www.dorg.tech/" target="_blank" rel="noopener noreferrer">dOrg</a>, 
-                        <a href="https://hypotenuselabs.com/" target="_blank" rel="noopener noreferrer">Hype Labs</a>, 
-                        <a href="https://onbons.ai/" target="_blank" rel="noopener noreferrer">Bonsai</a> | Recently experimenting in onchain social
-                    </p>
-                </div>
-
-                <!-- Projects Grid -->
-                <div class="projects-grid">
-                    <a href="https://www.zorastrategy.fun/" class="project-card" target="_blank">
-                        <div class="project-label">[ZSTR]</div>
-                        <div class="project-desc">First onchain treasury strategy for creator coin ecosystem</div>
-                    </a>
-                    
-                    <a href="https://www.getimagine.club/" class="project-card" target="_blank">
-                        <div class="project-label">[IMAGINE]</div>
-                        <div class="project-desc">Swap-to-generate mini app for Base/Zora with Sora 2</div>
-                    </a>
-                    
-                    <a href="https://launch.onbons.ai/" class="project-card" target="_blank">
-                        <div class="project-label">[IASNOB]</div>
-                        <div class="project-desc">LTS evolution of Bonsai. Lens Chain launchpad with social features</div>
-                    </a>
-                </div>
-
-                <!-- Links -->
-                <div class="links-section">
-                    <a href="https://github.com/c0rv0s" class="terminal-link" target="_blank">
-                        <i class="fa fa-github"></i> GitHub
-                    </a>
-                    <a href="https://twitter.com/c0rv0s" class="terminal-link" target="_blank">
-                        <i class="fa fa-twitter"></i> Twitter
-                    </a>
-                    <a href="https://farcaster.xyz/c0rv0s" class="terminal-link" target="_blank">
-                        <i class="fa fa-comments"></i> Farcaster
-                    </a>
-                    <a href="https://t.me/c0rv0s" class="terminal-link" target="_blank">
-                        <i class="fa fa-paper-plane"></i> Telegram
-                    </a>
-                </div>
-            </div>
+        <!-- Info -->
+        <div class="info-section">
+          <h1 class="glitch" data-text="NATE MUELLER">NATE MUELLER</h1>
+          <p class="subtitle">
+            <span class="prompt">$</span> Smart Contract Engineer <span class="cursor">_</span>
+          </p>
+          <p class="description">
+            Previously:
+            <a href="https://www.dorg.tech/" target="_blank" rel="noopener noreferrer">dOrg</a>,
+            <a href="https://hypotenuselabs.com/" target="_blank" rel="noopener noreferrer"
+              >Hype Labs</a
+            >, <a href="https://onbons.ai/" target="_blank" rel="noopener noreferrer">Bonsai</a> |
+            Recently experimenting in onchain social
+          </p>
         </div>
 
-        <script>
-            // Ancient Glyph rain animation
-            const canvas = document.getElementById('matrix');
-            const ctx = canvas.getContext('2d');
+        <!-- Projects Grid -->
+        <div class="projects-grid">
+          <a href="https://www.zorastrategy.fun/" class="project-card" target="_blank">
+            <div class="project-label">[ZSTR]</div>
+            <div class="project-desc">
+              First onchain treasury strategy for creator coin ecosystem
+            </div>
+          </a>
 
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+          <a href="https://www.getimagine.club/" class="project-card" target="_blank">
+            <div class="project-label">[IMAGINE]</div>
+            <div class="project-desc">Swap-to-generate mini app for Base/Zora with Sora 2</div>
+          </a>
 
-            // Ancient mystical glyphs: runes, alchemical symbols, astronomical symbols
-            const glyphs = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛝᛞᛟᛠᛡᛢᛣᛤᛥᛦᛧᛨᛩᛪ☉☽☿♀♁♂♃♄♅♆♇⚕⚚⚛⚜⚝⚞⚟⚡⚢⚣⚤⚥⚦⚧⚨⚩⚬⚭⚮⚯⚰⚱⚲⚳⚴⚵⚶⚷⚸⚹⚺⚻⚼✦✧✩✪✫✬✭✮✯✰✱✲✳✴✵✶✷✸✹✺✻✼✽✾✿❀❁❂❃❄❅❆❇❈❉❊❋●❍■□▢▣▤▥▦▧▨▩▪▫▬▭▮▯◆◇◈◉◊○◌◍◎●◐◑◒◓◔◕◖◗◘◙◚◛◜◝◞◟◠◡◢◣◤◥◦◧◨◩◪◫◬◭◮◯☀☁☂☃☄★☆☇☈☉☊☋☌☍☎☏☐☑☒☓☖☗☘☙☚☛☜☝☞☟☠☡☢☣☤☥☦☧☨☩☪☫☬☭☮☯☰☱☲☳☴☵☶☷☸☹☺☻☼☽☾☿♀♁♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓';
-            const fontSize = 18;
-            const columns = canvas.width / fontSize;
-            const drops = Array(Math.floor(columns)).fill(1);
+          <a href="https://launch.onbons.ai/" class="project-card" target="_blank">
+            <div class="project-label">[IASNOB]</div>
+            <div class="project-desc">
+              LTS evolution of Bonsai. Lens Chain launchpad with social features
+            </div>
+          </a>
+        </div>
 
-            function drawGlyphs() {
-                const theme = document.body.getAttribute('data-theme') || 'aqua';
-                
-                // Theme-specific colors
-                let bgFade, glyphColor;
-                if (theme === 'matrix') {
-                    bgFade = 'rgba(0, 0, 0, 0.05)';
-                    glyphColor = 'rgba(0, 255, 65, 0.8)';
-                } else if (theme === 'hyper') {
-                    bgFade = 'rgba(10, 0, 20, 0.05)';
-                    // Alternate between hot pink and cyan for that classic synthwave look
-                    glyphColor = Math.random() > 0.5 ? 'rgba(255, 0, 110, 0.8)' : 'rgba(0, 245, 255, 0.8)';
-                } else { // aqua
-                    bgFade = 'rgba(248, 255, 254, 0.05)';
-                    glyphColor = 'rgba(64, 224, 208, 0.8)';
-                }
-                
-                ctx.fillStyle = bgFade;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = glyphColor;
-                ctx.font = fontSize + 'px monospace';
-                
-                for (let i = 0; i < drops.length; i++) {
-                    const text = glyphs[Math.floor(Math.random() * glyphs.length)];
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    
-                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    drops[i]++;
-                }
-            }
+        <!-- Links -->
+        <div class="links-section">
+          <a href="https://github.com/c0rv0s" class="terminal-link" target="_blank">
+            <i class="fa fa-github"></i> GitHub
+          </a>
+          <a href="https://twitter.com/c0rv0s" class="terminal-link" target="_blank">
+            <i class="fa fa-twitter"></i> Twitter
+          </a>
+          <a href="https://farcaster.xyz/c0rv0s" class="terminal-link" target="_blank">
+            <i class="fa fa-comments"></i> Farcaster
+          </a>
+          <a href="https://t.me/c0rv0s" class="terminal-link" target="_blank">
+            <i class="fa fa-paper-plane"></i> Telegram
+          </a>
+        </div>
+      </div>
+    </div>
 
-            setInterval(drawGlyphs, 40);
+    <script>
+      // Ancient Glyph rain animation
+      const canvas = document.getElementById("matrix")
+      const ctx = canvas.getContext("2d")
 
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            });
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
 
-            // Theme Switcher
-            const themeButtons = document.querySelectorAll('.theme-btn');
-            const body = document.body;
-            
-            // Load saved theme or default to aqua
-            const savedTheme = localStorage.getItem('portfolio-theme') || 'aqua';
-            body.setAttribute('data-theme', savedTheme);
-            
-            // Update button states on load
-            themeButtons.forEach(b => b.classList.remove('active'));
-            document.querySelector(`[data-theme="${savedTheme}"]`).classList.add('active');
-            
-            themeButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const theme = btn.getAttribute('data-theme');
-                    body.setAttribute('data-theme', theme);
-                    localStorage.setItem('portfolio-theme', theme);
-                    
-                    // Update active state
-                    themeButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    // Update canvas color based on theme
-                    updateCanvasColor();
-                });
-            });
-            
-            function updateCanvasColor() {
-                // This will be picked up by the draw function
-            }
+      // Ancient mystical glyphs: runes, alchemical symbols, astronomical symbols
+      const glyphs =
+        "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛝᛞᛟᛠᛡᛢᛣᛤᛥᛦᛧᛨᛩᛪ☉☽☿♀♁♂♃♄♅♆♇⚕⚚⚛⚜⚝⚞⚟⚡⚢⚣⚤⚥⚦⚧⚨⚩⚬⚭⚮⚯⚰⚱⚲⚳⚴⚵⚶⚷⚸⚹⚺⚻⚼✦✧✩✪✫✬✭✮✯✰✱✲✳✴✵✶✷✸✹✺✻✼✽✾✿❀❁❂❃❄❅❆❇❈❉❊❋●❍■□▢▣▤▥▦▧▨▩▪▫▬▭▮▯◆◇◈◉◊○◌◍◎●◐◑◒◓◔◕◖◗◘◙◚◛◜◝◞◟◠◡◢◣◤◥◦◧◨◩◪◫◬◭◮◯☀☁☂☃☄★☆☇☈☉☊☋☌☍☎☏☐☑☒☓☖☗☘☙☚☛☜☝☞☟☠☡☢☣☤☥☦☧☨☩☪☫☬☭☮☯☰☱☲☳☴☵☶☷☸☹☺☻☼☽☾☿♀♁♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓"
+      const fontSize = 18
+      const columns = canvas.width / fontSize
+      const drops = Array(Math.floor(columns)).fill(1)
 
-            // Window management buttons
-            const terminal = document.getElementById('terminal');
-            const closeBtn = document.querySelector('.terminal-button.close');
-            const minimizeBtn = document.querySelector('.terminal-button.minimize');
-            const maximizeBtn = document.querySelector('.terminal-button.maximize');
-            
-            let isMaximized = false;
-            let isMinimized = false;
+      function drawGlyphs() {
+        const theme = document.body.getAttribute("data-theme") || "hyper"
 
-            // Close button - fade out and hide
-            closeBtn.addEventListener('click', () => {
-                terminal.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                terminal.style.opacity = '0';
-                terminal.style.transform = 'translate(-50%, -50%) scale(0.8)';
-                setTimeout(() => {
-                    terminal.style.display = 'none';
-                    // Reload after 2 seconds to bring it back
-                    setTimeout(() => location.reload(), 2000);
-                }, 500);
-            });
+        // Theme-specific colors
+        let bgFade, glyphColor
+        if (theme === "matrix") {
+          bgFade = "rgba(0, 0, 0, 0.05)"
+          glyphColor = "rgba(0, 255, 65, 0.8)"
+        } else if (theme === "synth") {
+          bgFade = "rgba(10, 0, 20, 0.05)"
+          // Alternate between hot pink and cyan for that classic synthwave look
+          glyphColor = Math.random() > 0.5 ? "rgba(255, 0, 110, 0.8)" : "rgba(0, 245, 255, 0.8)"
+        } else {
+          // aqua
+          bgFade = "rgba(248, 255, 254, 0.05)"
+          glyphColor = "rgba(64, 224, 208, 0.8)"
+        }
 
-            // Minimize button - shrink to bottom
-            minimizeBtn.addEventListener('click', () => {
-                if (isMinimized) {
-                    terminal.style.width = '';
-                    terminal.style.maxWidth = '';
-                    terminal.style.height = '';
-                    terminal.style.top = '50%';
-                    terminal.style.transform = 'translate(-50%, -50%)';
-                    terminal.querySelector('.terminal-body').style.display = 'block';
-                    isMinimized = false;
-                } else {
-                    terminal.style.width = '400px';
-                    terminal.style.maxWidth = '400px';
-                    terminal.style.height = 'auto';
-                    terminal.style.top = 'auto';
-                    terminal.style.bottom = '20px';
-                    terminal.style.transform = 'translate(-50%, 0)';
-                    terminal.querySelector('.terminal-body').style.display = 'none';
-                    isMinimized = true;
-                }
-            });
+        ctx.fillStyle = bgFade
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-            // Maximize button - toggle fullscreen
-            maximizeBtn.addEventListener('click', () => {
-                if (isMaximized) {
-                    terminal.style.width = '90%';
-                    terminal.style.maxWidth = '900px';
-                    terminal.style.height = '';
-                    terminal.style.maxHeight = '95vh';
-                    terminal.style.borderRadius = '8px';
-                    isMaximized = false;
-                } else {
-                    terminal.style.width = '98vw';
-                    terminal.style.maxWidth = '98vw';
-                    terminal.style.height = '98vh';
-                    terminal.style.maxHeight = '98vh';
-                    terminal.style.borderRadius = '0';
-                    isMaximized = true;
-                }
-            });
-        </script>
-    </body>
+        ctx.fillStyle = glyphColor
+        ctx.font = fontSize + "px monospace"
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = glyphs[Math.floor(Math.random() * glyphs.length)]
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize)
+
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0
+          }
+          drops[i]++
+        }
+      }
+
+      setInterval(drawGlyphs, 40)
+
+      window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+      })
+
+      // Theme Switcher
+      const themeButtons = document.querySelectorAll(".theme-btn")
+      const body = document.body
+
+      // Load saved theme or default to aqua
+      const savedTheme = localStorage.getItem("portfolio-theme") || "aqua"
+      body.setAttribute("data-theme", savedTheme)
+
+      // Update button states on load
+      themeButtons.forEach((b) => b.classList.remove("active"))
+      document.querySelector(`[data-theme="${savedTheme}"]`).classList.add("active")
+
+      themeButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const theme = btn.getAttribute("data-theme")
+          body.setAttribute("data-theme", theme)
+          localStorage.setItem("portfolio-theme", theme)
+
+          // Update active state
+          themeButtons.forEach((b) => b.classList.remove("active"))
+          btn.classList.add("active")
+
+          // Update canvas color based on theme
+          updateCanvasColor()
+        })
+      })
+
+      function updateCanvasColor() {
+        // This will be picked up by the draw function
+      }
+
+      // Window management buttons
+      const terminal = document.getElementById("terminal")
+      const closeBtn = document.querySelector(".terminal-button.close")
+      const minimizeBtn = document.querySelector(".terminal-button.minimize")
+      const maximizeBtn = document.querySelector(".terminal-button.maximize")
+
+      let isMaximized = false
+      let isMinimized = false
+
+      // Close button - fade out and hide
+      closeBtn.addEventListener("click", () => {
+        terminal.style.transition = "opacity 0.5s ease, transform 0.5s ease"
+        terminal.style.opacity = "0"
+        terminal.style.transform = "translate(-50%, -50%) scale(0.8)"
+        setTimeout(() => {
+          terminal.style.display = "none"
+          // Reload after 2 seconds to bring it back
+          setTimeout(() => location.reload(), 2000)
+        }, 500)
+      })
+
+      // Minimize button - shrink to bottom
+      minimizeBtn.addEventListener("click", () => {
+        const terminalBody = terminal.querySelector(".terminal-body")
+
+        if (isMinimized) {
+          // Restore from minimized state to normal - remove ALL inline styles
+          terminal.removeAttribute("style")
+          terminalBody.removeAttribute("style")
+          isMinimized = false
+          isMaximized = false
+        } else {
+          // Minimize to bottom
+          terminal.style.width = "400px"
+          terminal.style.maxWidth = "400px"
+          terminal.style.height = "auto"
+          terminal.style.top = "auto"
+          terminal.style.bottom = "20px"
+          terminal.style.transform = "translate(-50%, 0)"
+          terminalBody.style.display = "none"
+          terminal.style.borderRadius = "8px"
+          isMinimized = true
+        }
+      })
+
+      // Maximize button - toggle fullscreen
+      maximizeBtn.addEventListener("click", () => {
+        const terminalBody = terminal.querySelector(".terminal-body")
+
+        if (isMaximized) {
+          // Restore from maximized state - remove ALL inline styles
+          terminal.removeAttribute("style")
+          terminalBody.removeAttribute("style")
+          isMaximized = false
+          isMinimized = false
+        } else {
+          // Maximize to fullscreen
+          terminal.style.width = "98vw"
+          terminal.style.maxWidth = "98vw"
+          terminal.style.height = "98vh"
+          terminal.style.maxHeight = "98vh"
+          terminal.style.borderRadius = "0"
+          terminalBody.style.display = "block"
+          isMaximized = true
+        }
+      })
+    </script>
+  </body>
 </html>
