@@ -358,11 +358,20 @@ h1 {
 }
 
 /* Projects Grid */
+.projects-subtitle {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 15px;
-  margin: 25px 0;
+  margin: 12px 0 25px;
+}
+
+.project-desc-coming-soon {
+  margin-top: 8px;
 }
 
 .project-card {
@@ -397,6 +406,19 @@ h1 {
   box-shadow: 0 0 20px var(--glow-color);
   transform: translateY(-5px);
   border-color: var(--secondary-color);
+}
+
+.project-card--static {
+  cursor: default;
+}
+
+.project-card--static:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.project-card--static::before {
+  display: none;
 }
 
 .project-label {
