@@ -15,7 +15,8 @@ export async function createVR({renderer,scene,camera,game,session,onPortalRay,o
   const cardCanvas=document.createElement('canvas');cardCanvas.width=1024;cardCanvas.height=768;
   const ctx=cardCanvas.getContext('2d'),texture=new THREE.CanvasTexture(cardCanvas);texture.colorSpace=THREE.SRGBColorSpace;
   const panelGeometry=new THREE.PlaneGeometry(1.6,1.2);ownedGeometry.push(panelGeometry);
-  const panelMaterial=new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide,depthTest:false});ownedMaterials.push(panelMaterial);
+  // Join the transparent pass so renderOrder places the card above portal effects.
+  const panelMaterial=new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide,transparent:true,depthTest:false,depthWrite:false});ownedMaterials.push(panelMaterial);
   const panel=new THREE.Mesh(panelGeometry,panelMaterial);panel.renderOrder=100;panel.visible=false;visuals.add(panel);
   const healthCanvas=document.createElement('canvas');healthCanvas.width=512;healthCanvas.height=128;
   const healthTexture=new THREE.CanvasTexture(healthCanvas);healthTexture.colorSpace=THREE.SRGBColorSpace;
