@@ -18,10 +18,13 @@
   </main>
   <header class="masthead">
     <a class="name" href="#home" id="home">Nate Mueller<span>Games, apps &amp; other worlds.</span></a>
-    <nav aria-label="Portfolio navigation"><button id="about-button">About</button><button id="index-button" aria-expanded="false" aria-controls="places">All places <span aria-hidden="true">☷</span></button></nav>
+    <nav aria-label="Portfolio navigation"><button id="first-person" aria-pressed="false">First person</button><button id="about-button">About</button><button id="index-button" aria-expanded="false" aria-controls="places">All places <span aria-hidden="true">☷</span></button></nav>
   </header>
   <nav id="island-nav" aria-label="Choose an island"></nav>
   <div class="intro" id="intro"><h1>Three islands.<br><em>Different worlds.</em></h1><p>A few things I've made,<br>scattered across an archipelago.</p><span class="explore-hint"><span aria-hidden="true">✣</span> Drag to explore. Find a portal.</span></div>
+  <div id="pointer-prompt" hidden><button id="pointer-start">Click to play</button><p id="pointer-note">Mouse to look · Esc to release cursor</p><button id="pointer-fallback" hidden>Use drag controls</button></div>
+  <div id="game-loading" hidden role="status"><span class="loading-glyph" aria-hidden="true">⚔</span><p>Entering the islands</p><span id="game-loading-status">Loading the adventure…</span></div>
+  <div id="flight-controls" hidden><p>WASD move · Shift run · Space double jump · Click swing · E portal · Esc pause</p><div><button data-fly="w" aria-label="Move forward">↑</button><button data-fly="s" aria-label="Move backward">↓</button><button data-fly="a" aria-label="Move left">←</button><button data-fly="d" aria-label="Move right">→</button><button data-fly="shift" aria-label="Hold to run">Run</button><button id="game-jump">Jump</button><button id="game-attack">Swing</button><button id="game-interact">Portal</button></div></div>
   <div class="discovery" id="discovery" role="status" aria-live="polite"></div>
   <aside id="places" class="places" aria-label="All places" hidden>
     <div class="places-heading"><h2>Places to find</h2><button id="close-places" aria-label="Close places">×</button></div>

@@ -58,3 +58,20 @@ Run `node --check world.js` and `git diff --check` for syntax and patch checks. 
 The About island uses flat sandstone mesas, a winding dry canyon, branching cacti, and a palm spring. Temple clearings and the orthogonal bridge approaches remain reserved in terrain generation.
 
 Background music: user-supplied “Portal Drift” (`audio/portal-drift.m4a`), looped at 30% volume through the opt-in sound toggle. Replaces the synthesized drone; quiet portal discovery chimes remain. Playback pauses when hidden and resumes at its previous position.
+
+
+## Optional first-person game
+
+`first-person-game.js` and `game-physics.js` are dynamically imported only on First person entry. Enemy meshes, the collision index, sword, and health HUD are constructed then. The isometric map never imports those modules on its initial load. A separate loading screen covers construction; procedural models reuse local Three.js and require no external assets.
+
+- WASD / arrows move; hold Shift to run. Hits knock the recipient backward with collision checks. Space jumps, with one additional jump in the air. Small stairs auto-step. Gravity and collisions apply to cliffs, bridges, and ruins.
+- Desktop mouse capture starts with Click to play. Escape releases the mouse and pauses gameplay. Portal previews release capture and pause simulation; Click to play resumes afterward. Browsers that reject pointer lock offer drag controls. Touch has movement, jump, swing, and portal buttons.
+- Click swings the right-hand sword forward; E opens a portal within reach. A sword swing aimed at a portal within 3.8 units opens the same preview at swing contact and pauses combat immediately. Enemies flash red on successful hits.
+- Skeleton warriors guard About, snakes guard iOS, and spiders guard Games. They chase nearby players within their biome, wind up attacks, deal damage, and can be defeated. Health loss or falling returns the player to their entry sanctuary. Defeated enemies can respawn after a delay when the player is away.
+- Back to map hides the game and restores the original map camera.
+
+Validation: `node tests/game-physics.test.mjs` covers double jump, landing reset, wall collision, stairs, and falling. `node tests/game-combat.test.mjs` covers biome enemies, aggro, damage, sword kills, modal pause, and exit. Browser entry/rendering and fallback are verified in the in-app browser, which rejects pointer lock; Chrome automation timed out, so real mouse capture still needs manual verification there.
+
+Monsters wander between nearby destinations, rest, and interrupt wandering to chase. Defeated skeletons fall sideways; snakes and spiders roll over and remain visible until an out-of-sight respawn. Monster updates are grouped by island: only the player's current island advances AI, hit flashes, death animations, and respawn timers. Combat tests cover visible fallen bodies, wandering/resting, and exact state preservation on inactive islands.
+
+First-person sky rendering reconstructs camera rays and projects clouds onto a distant world-space sphere. The isometric map and temple previews retain the original aspect-fitted cloud image and gentle drift.

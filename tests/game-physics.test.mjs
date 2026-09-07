@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {CollisionWorld,Walker} from '../game-physics.js';
+const block=(x,y,z,w,h,d)=>({x,y,z,w,h,d});
+const world=new CollisionWorld([block(0,-.5,0,20,1,20),block(2,1,0,.2,2,4),block(-2,.2,0,1,.4,2)]);
+const p=new Walker(world);p.spawn(0,0,0);
+assert.equal(p.jump(),true);p.move(0,0,.1);assert(p.y>0);
+assert.equal(p.jump(),true);assert.equal(p.jump(),false);
+for(let i=0;i<180;i++)p.move(0,0,1/60);
+assert.equal(p.y,0);assert.equal(p.jumps,0);assert(p.grounded);
+p.move(4,0,.06);assert(p.x<1.7,'wall stops horizontal movement');
+p.spawn(0,0,0);for(let i=0;i<30;i++)p.move(-.08,0,1/60);
+assert.equal(p.y,.4,'short stairs can be climbed');
+p.spawn(0,0,0);for(let i=0;i<180;i++)p.move(0,.1,1/60);
+assert(p.y<0,'walking off an edge applies gravity');
+console.log('Double jump, landing reset, wall collision, stair stepping, and falling passed.');

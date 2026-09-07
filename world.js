@@ -83,7 +83,12 @@ renderer.toneMappingExposure = 1.18;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#cbbdd0');
 scene.fog = new THREE.Fog('#cbbdd0', 270, 530);
-const camera = new THREE.OrthographicCamera(-30, 30, 20, -20, .1, 800);
+let camera = new THREE.OrthographicCamera(-30, 30, 20, -20, .1, 800);
+const mapCamera=camera;
+const eyeCamera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,800);
+eyeCamera.rotation.order='YXZ';
+let firstPerson=false;
+const flightKeys=new Set();
 const target = new THREE.Vector3(aboutPlace.x,aboutPlace.h+2,aboutPlace.z+3);
 const desiredTarget = target.clone();
 const offset = new THREE.Vector3(160, 155, 190);
@@ -264,24 +269,51 @@ for(const [x,z] of [[-35,82],[-32.5,90],[-27.5,80]]) {
   }
 }
 
-// A cloud backdrop sits behind all geometry, with a slow drift and dusk tint.
+// Project the clouds onto a distant world-space sky shell. Reconstructing
+// camera rays makes rotation and translation reveal the surrounding sky.
 const cloudTexture=new THREE.TextureLoader().load('images/sky/clouds.jpg');
 cloudTexture.colorSpace=THREE.SRGBColorSpace;
+cloudTexture.wrapS=cloudTexture.wrapT=THREE.MirroredRepeatWrapping;
 const cloudMaterial=new THREE.ShaderMaterial({
-  uniforms:{uMap:{value:cloudTexture},uTime:{value:0},uNight:{value:0},uAspect:{value:innerWidth/innerHeight}},
+  uniforms:{uMap:{value:cloudTexture},uTime:{value:0},uNight:{value:0},uPerspective:{value:0},uAspect:{value:1},uInverseProjection:{value:new THREE.Matrix4()},uCameraWorld:{value:new THREE.Matrix4()}},
   vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,1.,1.);}`,
-  fragmentShader:`varying vec2 vUv;uniform sampler2D uMap;uniform float uTime;uniform float uNight;uniform float uAspect;
-  void main(){vec2 uv=vUv;float imageAspect=1.5;
-    if(uAspect>imageAspect)uv.y=(uv.y-.5)*imageAspect/uAspect+.5;
-    else uv.x=(uv.x-.5)*uAspect/imageAspect+.5;
-    uv=(uv-.5)*.94+.5+vec2(sin(uTime*.018)*.015,cos(uTime*.012)*.008);
-    vec3 color=texture2D(uMap,uv).rgb;
+  fragmentShader:`varying vec2 vUv;uniform sampler2D uMap;uniform float uTime;uniform float uNight;
+  uniform float uPerspective;uniform float uAspect;uniform mat4 uInverseProjection;uniform mat4 uCameraWorld;
+  void main(){
+    vec2 drift=vec2(sin(uTime*.018)*.015,cos(uTime*.012)*.008);
+    vec3 color;
+    if(uPerspective<.5){
+      // Preserve the original full-image composition for the isometric map.
+      vec2 uv=vUv;float imageAspect=1.5;
+      if(uAspect>imageAspect)uv.y=(uv.y-.5)*imageAspect/uAspect+.5;
+      else uv.x=(uv.x-.5)*uAspect/imageAspect+.5;
+      uv=(uv-.5)*.94+.5+drift;
+      color=texture2D(uMap,uv).rgb;
+    }else{
+    vec4 view=uInverseProjection*vec4(vUv*2.-1.,-1.,1.);view/=view.w;
+    vec3 origin=(uCameraWorld*vec4(view.xyz,1.)).xyz;
+    vec3 ray=normalize(mat3(uCameraWorld)*mix(vec3(0.,0.,-1.),normalize(view.xyz),uPerspective));
+    float b=dot(origin,ray);
+    float distance=-b+sqrt(max(0.,b*b-dot(origin,origin)+650.*650.));
+    vec3 p=(origin+ray*distance)/650.;
+    vec3 weights=pow(abs(p),vec3(8.));weights/=max(.0001,weights.x+weights.y+weights.z);
+    // Blend three projections, avoiding a panorama seam or pinched poles.
+    color=texture2D(uMap,p.yz*.65+.5+drift).rgb*weights.x
+      +texture2D(uMap,p.xz*.65+.5+drift).rgb*weights.y
+      +texture2D(uMap,p.xy*.65+.5+drift).rgb*weights.z;
+    }
     color=mix(color,color*vec3(.22,.24,.42),uNight);
     gl_FragColor=vec4(color,1.);
     #include <colorspace_fragment>
   }`,depthWrite:false,depthTest:false
 });
 const cloudBackdrop=new THREE.Mesh(new THREE.PlaneGeometry(2,2),cloudMaterial);
+cloudBackdrop.onBeforeRender=(_renderer,_scene,viewCamera)=>{
+  cloudMaterial.uniforms.uInverseProjection.value.copy(viewCamera.projectionMatrixInverse);
+  cloudMaterial.uniforms.uCameraWorld.value.copy(viewCamera.matrixWorld);
+  cloudMaterial.uniforms.uPerspective.value=viewCamera.isPerspectiveCamera?1:0;
+  cloudMaterial.uniforms.uAspect.value=viewCamera.isPerspectiveCamera?viewCamera.aspect:(viewCamera.right-viewCamera.left)/(viewCamera.top-viewCamera.bottom);
+};
 cloudBackdrop.frustumCulled=false;cloudBackdrop.renderOrder=-10000;scene.add(cloudBackdrop);
 
 // Wide, worn stairs and asymmetrical columns build each sanctuary.
@@ -505,6 +537,7 @@ const petalGeometry=new THREE.BufferGeometry();petalGeometry.setAttribute('posit
 const petals=new THREE.Points(petalGeometry,new THREE.PointsMaterial({color:'#f7d9de',size:.09,transparent:true,opacity:.7,sizeAttenuation:true}));scene.add(petals);
 
 function updateCamera() {
+  if(firstPerson){eyeCamera.aspect=innerWidth/innerHeight;eyeCamera.updateProjectionMatrix();eyeCamera.updateMatrixWorld();return;}
   const aspect=innerWidth/innerHeight;
   camera.left=-viewSize*aspect/2;camera.right=viewSize*aspect/2;camera.top=viewSize/2;camera.bottom=-viewSize/2;
   camera.position.copy(target).add(offset);camera.lookAt(target);camera.updateProjectionMatrix();camera.updateMatrixWorld();
@@ -528,6 +561,8 @@ function travel(state) {
   openProject(state);
 }
 function openProject(state) {
+  flightKeys.clear();
+  if(document.pointerLockElement===canvas)document.exitPointerLock();
   explore();discover(state);
   const p=state.place;
   $('project-title').textContent=p.name;$('project-kind').textContent=p.kind;$('project-description').textContent=p.description;$('project-note').textContent=p.note;$('project-note').hidden=!p.note;
@@ -535,10 +570,11 @@ function openProject(state) {
   $('project-art').style.background=p.color;
   pendingPreview=state;
   if(!$('project').open)$('project').showModal();
+  updatePointerPrompt();
 }
 function closeProject() { $('project').close();hovered=null;$('scene').focus({preventScroll:true}); }
 $('close-project').addEventListener('click',closeProject);$('keep-exploring').addEventListener('click',closeProject);
-$('project').addEventListener('close',()=>{hovered=null;});
+$('project').addEventListener('close',()=>{hovered=null;updatePointerPrompt();});
 $('project').addEventListener('click',e=>{if(e.target===$('project')){const r=$('project').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeProject();}});
 function closePlaces(){$('places').hidden=true;$('index-button').setAttribute('aria-expanded','false');}
 $('index-button').addEventListener('click',()=>{const open=$('places').hidden;$('places').hidden=!open;$('index-button').setAttribute('aria-expanded',String(open));});
@@ -547,7 +583,7 @@ $('about-button').addEventListener('click',()=>travel(portalObjects[0]));
 function home() {desiredTarget.set(aboutPlace.x,aboutPlace.h+2,aboutPlace.z+3);desiredSize=MAX_VIEW_SIZE;hovered=null;}
 $('home').addEventListener('click',e=>{e.preventDefault();home();});$('reset-view').addEventListener('click',home);
 const clamp=THREE.MathUtils.clamp;
-function zoom(amount) {desiredSize=clamp(desiredSize*amount,MIN_VIEW_SIZE,MAX_VIEW_SIZE);explore();}
+function zoom(amount) {if(firstPerson)return;desiredSize=clamp(desiredSize*amount,MIN_VIEW_SIZE,MAX_VIEW_SIZE);explore();}
 $('zoom-in').addEventListener('click',()=>zoom(.8));$('zoom-out').addEventListener('click',()=>zoom(1.25));
 $('time').addEventListener('click',()=>{night=!night;document.body.classList.toggle('night',night);$('time').textContent=night?'Dawn':'Dusk';$('time').setAttribute('aria-pressed',String(night));$('time').setAttribute('aria-label',night?'Switch to daylight':'Switch to night');});
 const raycaster=new THREE.Raycaster();
@@ -575,26 +611,37 @@ $('new-walk').addEventListener('click',()=>{
 });
 const canvas=$('scene');
 canvas.addEventListener('pointerdown',e=>{
+  if(firstPerson&&document.pointerLockElement===canvas){if(e.button===0)game?.attack();return;}
+  if(firstPerson&&pointerPaused()){lockPointer();return;}
   if(e.button!==0 && e.pointerType==='mouse')return;
   closePlaces();pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});canvas.setPointerCapture(e.pointerId);
   pointerDown=true;didDrag=false;lastPointer={x:e.clientX,y:e.clientY};canvas.classList.add('dragging');
   if(pointers.size===2){const [a,b]=[...pointers.values()];pinchDistance=Math.hypot(a.x-b.x,a.y-b.y);didDrag=true;}
 });
 canvas.addEventListener('pointermove',e=>{
+  if(document.pointerLockElement===canvas)return;
+  if(firstPerson && pointerDown && lastPointer){
+    const dx=e.clientX-lastPointer.x,dy=e.clientY-lastPointer.y;
+    if(Math.abs(dx)+Math.abs(dy)>2)didDrag=true;
+    if(didDrag){eyeCamera.rotation.y-=dx*.004;eyeCamera.rotation.x=clamp(eyeCamera.rotation.x-dy*.004,-1.4,1.4);}
+    lastPointer={x:e.clientX,y:e.clientY};return;
+  }
   if(pointers.has(e.pointerId))pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(pointers.size===2){const [a,b]=[...pointers.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);if(pinchDistance>0)desiredSize=clamp(desiredSize*pinchDistance/Math.max(d,1),MIN_VIEW_SIZE,MAX_VIEW_SIZE);pinchDistance=d;didDrag=true;explore();return;}
   if(pointerDown&&lastPointer){const dx=e.clientX-lastPointer.x,dy=e.clientY-lastPointer.y;if(Math.abs(dx)+Math.abs(dy)>2)didDrag=true;if(didDrag){pan(dx,dy);explore();}lastPointer={x:e.clientX,y:e.clientY};}
   else if(e.pointerType!=='touch'){hovered=pickPortal(e.clientX,e.clientY);canvas.style.cursor=hovered?'pointer':'grab';if(hovered)discover(hovered);}
 });
 function release(e,cancelled=false){
+  if(firstPerson&&document.pointerLockElement===canvas)return;
   pointers.delete(e.pointerId);
-  if(!cancelled&&!didDrag&&pointerDown){const state=pickPortal(e.clientX,e.clientY);if(state)openProject(state);}
+  if(!cancelled&&!didDrag&&pointerDown){const state=pickPortal(e.clientX,e.clientY);if(state&&(!firstPerson||state.portal.position.distanceTo(eyeCamera.position)<8))openProject(state);else if(firstPerson)game?.attack();}
   if(pointers.size===0){pointerDown=false;lastPointer=null;canvas.classList.remove('dragging');pinchDistance=0;}
   else {lastPointer=[...pointers.values()][0];didDrag=true;}
 }
 canvas.addEventListener('pointerup',e=>release(e));canvas.addEventListener('pointercancel',e=>release(e,true));
 canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(clamp(e.deltaY,-160,160)*.0015));},{passive:false});
 canvas.addEventListener('keydown',e=>{
+  if(firstPerson)return;
   const shifts={ArrowLeft:[75,0],ArrowRight:[-75,0],ArrowUp:[0,75],ArrowDown:[0,-75],a:[75,0],d:[-75,0],w:[0,75],s:[0,-75]};
   if(shifts[e.key]){e.preventDefault();pan(...shifts[e.key]);explore();}
   if(e.key==='+'||e.key==='='){e.preventDefault();zoom(.85);}if(e.key==='-'){e.preventDefault();zoom(1.15);}
@@ -602,6 +649,95 @@ canvas.addEventListener('keydown',e=>{
 window.addEventListener('keydown',e=>{if(e.key==='Escape')closePlaces();});
 window.addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);updateCamera();});
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();$('fallback').hidden=false;});
+
+// The optional game is imported and constructed only after the entry button.
+let game=null,gameLoading=false;
+let dragFallback=false;
+const mouseLook=matchMedia('(pointer: fine)');
+function pointerPaused(){return firstPerson&&mouseLook.matches&&!dragFallback&&document.pointerLockElement!==canvas;}
+function updatePointerPrompt(){
+  $('pointer-prompt').hidden=!pointerPaused()||$('project').open;
+}
+async function lockPointer(){
+  if(!firstPerson||!mouseLook.matches||dragFallback)return;
+  try{await canvas.requestPointerLock();}
+  catch{$('pointer-note').textContent='Mouse capture is unavailable here. You can still use drag controls.';$('pointer-fallback').hidden=false;}
+}
+$('pointer-start').addEventListener('click',lockPointer);
+$('pointer-fallback').addEventListener('click',()=>{dragFallback=true;updatePointerPrompt();canvas.focus();});
+document.addEventListener('pointerlockchange',()=>{flightKeys.clear();pointerDown=false;lastPointer=null;updatePointerPrompt();if(document.pointerLockElement===canvas)canvas.focus();});
+document.addEventListener('pointerlockerror',()=>{$('pointer-note').textContent='Mouse capture is unavailable here. You can still use drag controls.';$('pointer-fallback').hidden=false;});
+document.addEventListener('mousemove',e=>{
+  if(!firstPerson||document.pointerLockElement!==canvas||$('project').open)return;
+  eyeCamera.rotation.y-=e.movementX*.0025;
+  eyeCamera.rotation.x=clamp(eyeCamera.rotation.x-e.movementY*.0025,-1.4,1.4);
+});
+async function setFirstPerson(enabled){
+  if(gameLoading)return;
+  if(enabled&&!game){
+    gameLoading=true;$('first-person').disabled=true;$('game-loading').hidden=false;
+    try{
+      const {createGame}=await import('./first-person-game.js');
+      game=await createGame({scene,camera:eyeCamera,blocks:batches.get('land')||[],places,islandAt,onSwordHit:strikePortal,onProgress:text=>$('game-loading-status').textContent=text});
+    }catch(error){
+      console.error('Game could not load',error);$('first-person').textContent='Retry first person';return;
+    }finally{gameLoading=false;$('first-person').disabled=false;$('game-loading').hidden=true;}
+  }
+  firstPerson=enabled;flightKeys.clear();pointers.clear();pointerDown=false;lastPointer=null;
+  document.body.classList.toggle('first-person',enabled);
+  $('first-person').textContent=enabled?'Back to map':'First person';
+  $('first-person').setAttribute('aria-pressed',String(enabled));
+  $('flight-controls').hidden=!enabled;
+  if(enabled){
+    closePlaces();explore();
+    const p=places.reduce((a,b)=>Math.hypot(b.x-target.x,b.z-target.z)<Math.hypot(a.x-target.x,a.z-target.z)?b:a);
+    camera=eyeCamera;game.enter(p);
+  }else{if(document.pointerLockElement===canvas)document.exitPointerLock();game?.exit();camera=mapCamera;}
+  updatePointerPrompt();
+  canvas.setAttribute('aria-label',enabled?'First person game: mouse to look, WASD to move, Space to jump or double jump, click to swing, E to open a nearby portal. Escape releases the mouse and pauses.':'Drag to explore the 3D map. Use arrow keys to pan, plus and minus to zoom.');
+  canvas.focus();updateCamera();
+}
+$('first-person').addEventListener('click',()=>setFirstPerson(!firstPerson));
+for(const id of ['island-nav','home','reset-view','index-button','about-button'])
+  $(id).addEventListener('click',()=>{if(firstPerson)setFirstPerson(false);},true);
+function interactPortal(){
+  if(!firstPerson||$('project').open)return;
+  const nearby=portalObjects.filter(s=>s.portal.position.distanceTo(eyeCamera.position)<8).sort((a,b)=>a.portal.position.distanceTo(eyeCamera.position)-b.portal.position.distanceTo(eyeCamera.position));
+  if(nearby[0])openProject(nearby[0]);
+}
+function strikePortal(){
+  if(!firstPerson||$('project').open)return false;
+  // Aim at the portal surface, with the same short reach as a sword swing.
+  eyeCamera.updateMatrixWorld();
+  const state=pickPortal(innerWidth/2,innerHeight/2);
+  if(!state)return false;
+  const hit=raycaster.intersectObject(state.portal)[0];
+  if(!hit||hit.distance>3.8)return false;
+  openProject(state);
+  return true;
+}
+window.addEventListener('keydown',e=>{
+  if(!firstPerson||$('project').open)return;
+  if(e.key==='Escape'){flightKeys.clear();return;}
+  if(e.target!==canvas)return;
+  const key=e.key.toLowerCase();
+  if(key===' '){e.preventDefault();if(!e.repeat)game.jump();return;}
+  if(key==='e'){e.preventDefault();if(!e.repeat)interactPortal();return;}
+  if(['w','a','s','d','shift','arrowup','arrowdown','arrowleft','arrowright'].includes(key)){e.preventDefault();flightKeys.add(key);}
+});
+window.addEventListener('keyup',e=>flightKeys.delete(e.key.toLowerCase()));
+window.addEventListener('blur',()=>flightKeys.clear());
+document.addEventListener('visibilitychange',()=>flightKeys.clear());
+for(const button of document.querySelectorAll('[data-fly]')){
+  button.addEventListener('pointerdown',e=>{e.preventDefault();button.setPointerCapture(e.pointerId);flightKeys.add(button.dataset.fly);});
+  for(const event of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(event,()=>flightKeys.delete(button.dataset.fly));
+}
+$('game-jump').addEventListener('click',()=>{game?.jump();canvas.focus();});
+$('game-attack').addEventListener('click',()=>{game?.attack();canvas.focus();});
+$('game-interact').addEventListener('click',interactPortal);
+function updateFlight(dt){
+  if(firstPerson)game?.update(dt,flightKeys,$('project').open||!$('places').hidden||pointerPaused());
+}
 
 // Audio is entirely local and starts only when explicitly switched on.
 let audioContext=null,audioGain=null,audioEnabled=false;
@@ -685,15 +821,17 @@ function animate(now) {
   scene.background.copy(dayBackground).lerp(nightBackground,nightMix);scene.fog.color.copy(scene.background);
   sun.color.copy(daySun).lerp(nightSun,nightMix);sky.color.copy(daySky).lerp(nightSky,nightMix);
   sun.intensity=3.1-nightMix*2.65;sky.intensity=1.6-nightMix*.95;cloudMaterial.uniforms.uNight.value=nightMix;
-  cloudMaterial.uniforms.uTime.value=time;cloudMaterial.uniforms.uAspect.value=innerWidth/innerHeight;
+  cloudMaterial.uniforms.uTime.value=time;
+  updateFlight(dt);
   updateCamera();
   $('zoom-out').disabled=desiredSize>=MAX_VIEW_SIZE-.01;
   $('zoom-in').disabled=desiredSize<=MIN_VIEW_SIZE+.01;
-  const currentIsland=islandAt(target.x,target.z);
+  const explorer=firstPerson?eyeCamera.position:target;
+  const currentIsland=islandAt(explorer.x,explorer.z);
   $('region-name').textContent=currentIsland?currentIsland.biome:'The old crossings';
   for(const button of $('island-nav').children)button.setAttribute('aria-pressed',String(button.dataset.island===currentIsland?.id));
   for(const state of portalObjects){
-    const distance=Math.hypot(target.x-state.place.x,target.z-state.place.z);
+    const distance=Math.hypot(explorer.x-state.place.x,explorer.z-state.place.z);
     if(interacted&&distance<6.5&&!$('project').open)discover(state);
     const isNear=distance<9;
     const power=hovered===state||isNear&&found.has(state.place.id)?1:found.has(state.place.id)?.55:0;
@@ -703,7 +841,7 @@ function animate(now) {
     projected.copy(state.anchor).project(camera);
     const screenX=(projected.x*.5+.5)*innerWidth,screenY=(-projected.y*.5+.5)*innerHeight;
     state.button.style.left=`${screenX}px`;state.button.style.top=`${screenY}px`;
-    const visible=projected.z>=-1&&projected.z<=1&&screenX>20&&screenX<innerWidth-20&&screenY>85&&screenY<innerHeight-75;
+    const visible=(!firstPerson||state.portal.position.distanceTo(eyeCamera.position)<8)&&projected.z>=-1&&projected.z<=1&&screenX>20&&screenX<innerWidth-20&&screenY>85&&screenY<innerHeight-75;
     state.button.hidden=!visible;state.button.classList.toggle('near',isNear&&found.has(state.place.id));
   }
   if(!reducedMotion.matches){petals.position.x=Math.sin(time*.06)*1.5;petals.position.y=-time*.07%8;petals.position.z=Math.cos(time*.05)*.8;}
