@@ -1,307 +1,44 @@
 <!doctype html>
-<html>
-  <head>
-    <title>Nate Mueller</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link rel="stylesheet" href="main.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://kit.fontawesome.com/8c1314c084.js" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <!-- Matrix Rain Background -->
-    <canvas id="matrix"></canvas>
-
-    <!-- Theme Switcher -->
-    <div class="theme-switcher">
-      <button class="theme-btn" data-theme="aqua" title="Aquamarine">◆</button>
-      <button class="theme-btn" data-theme="matrix" title="Matrix">◆</button>
-      <button class="theme-btn" data-theme="synth" title="Synthwave">◆</button>
-    </div>
-
-    <!-- Terminal Wrapper -->
-    <div id="terminal">
-      <div class="terminal-header">
-        <span class="terminal-button close" title="Close"></span>
-        <span class="terminal-button minimize" title="Minimize"></span>
-        <span class="terminal-button maximize" title="Maximize"></span>
-        <span class="terminal-title">c0rv0s.eth:~$</span>
-      </div>
-
-      <div class="terminal-body">
-        <!-- Avatar -->
-        <div class="avatar-container">
-          <a
-            href="https://opensea.io/item/ethereum/0xafe12842e3703a3cc3a71d9463389b1bf2c5bc1c/2100"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src="images/bored.jpeg" alt="c0rv0s" class="terminal-avatar" />
-          </a>
-        </div>
-
-        <!-- Info -->
-        <div class="info-section">
-          <h1 class="glitch" data-text="NATE MUELLER">NATE MUELLER</h1>
-          <p class="subtitle">
-            <span class="prompt">$</span> Smart Contract Engineer <span class="cursor">_</span>
-          </p>
-          <p class="description">
-            Previously:
-            <a href="https://www.dorg.tech/" target="_blank" rel="noopener noreferrer">dOrg</a>,
-            <a href="https://hypotenuselabs.com/" target="_blank" rel="noopener noreferrer"
-              >Hype Labs</a
-            >, Bonsai | Building onchain and agentic systems
-          </p>
-        </div>
-
-        <p class="subtitle projects-subtitle"><i>What im hacking on:</i></p>
-
-        <!-- Projects Grid -->
-        <div class="projects-grid">
-          <a href="https://termline.pro/" class="project-card" target="_blank">
-            <div class="project-label">[TERMLINE]</div>
-            <div class="project-desc">
-              A stablecoin-funded warehouse facility letting brands and fintech apps launch card
-              and credit products without carrying the balance sheet
-            </div>
-          </a>
-        </div>
-
-        <p class="subtitle projects-subtitle"><i>Games:</i></p>
-
-        <div class="projects-grid">
-          <a href="https://deadfrequency.rip/" class="project-card" target="_blank">
-            <div class="project-label">[DEAD FREQUENCY]</div>
-            <div class="project-desc">
-              A haunted space roguelike ship building game. $DEAF on bags
-            </div>
-          </a>
-
-          <a
-            href="https://nerf-arena-blast-revival.up.railway.app/"
-            class="project-card"
-            target="_blank"
-          >
-            <div class="project-label">[NERF ARENA BLAST]</div>
-            <div class="project-desc">A revival of the classic Nerf Arena Blast</div>
-          </a>
-
-          <a href="https://mossbell.netlify.app/" class="project-card" target="_blank">
-            <div class="project-label">[MOSSBELL]</div>
-            <div class="project-desc">A cozy life, gardening, and business simulator</div>
-            <div class="project-desc-coming-soon">Coming soon</div>
-          </a>
-        </div>
-
-        <p class="subtitle projects-subtitle"><i>iOS apps:</i></p>
-
-        <div class="projects-grid">
-          <a href="https://trylumina.today/" class="project-card" target="_blank">
-            <div class="project-label">[LUMINA]</div>
-            <div class="project-desc">A manifestation and astrology journal</div>
-          </a>
-
-          <a
-            href="https://apps.apple.com/us/app/glass-aquarium/id6761319262"
-            class="project-card"
-            target="_blank"
-          >
-            <div class="project-label">[GLASS AQUARIUM]</div>
-            <div class="project-desc">
-              An elegant liquid glass aquarium widget where the fish are chosen based on how you
-              sing
-            </div>
-          </a>
-
-          <a
-            href="https://apps.apple.com/us/app/mold-marauder/id1505605329"
-            class="project-card"
-            target="_blank"
-          >
-            <div class="project-label">[MOLD MARAUDER]</div>
-            <div class="project-desc">An adventure game where you breed exotic slime molds</div>
-          </a>
-        </div>
-
-        <!-- Links -->
-        <div class="links-section">
-          <a href="https://github.com/c0rv0s" class="terminal-link" target="_blank">
-            <i class="fa fa-github"></i> GitHub
-          </a>
-          <a href="https://twitter.com/c0rv0s" class="terminal-link" target="_blank">
-            <i class="fa fa-twitter"></i> Twitter
-          </a>
-          <a href="https://farcaster.xyz/c0rv0s" class="terminal-link" target="_blank">
-            <i class="fa fa-comments"></i> Farcaster
-          </a>
-          <a href="https://t.me/c0rv0s" class="terminal-link" target="_blank">
-            <i class="fa fa-paper-plane"></i> Telegram
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      // Ancient Glyph rain animation
-      const canvas = document.getElementById("matrix")
-      const ctx = canvas.getContext("2d")
-
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-
-      // Ancient mystical glyphs: runes, alchemical symbols, astronomical symbols
-      const glyphs =
-        "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛝᛞᛟᛠᛡᛢᛣᛤᛥᛦᛧᛨᛩᛪ☉☽☿♀♁♂♃♄♅♆♇⚕⚚⚛⚜⚝⚞⚟⚡⚢⚣⚤⚥⚦⚧⚨⚩⚬⚭⚮⚯⚰⚱⚲⚳⚴⚵⚶⚷⚸⚹⚺⚻⚼✦✧✩✪✫✬✭✮✯✰✱✲✳✴✵✶✷✸✹✺✻✼✽✾✿❀❁❂❃❄❅❆❇❈❉❊❋●❍■□▢▣▤▥▦▧▨▩▪▫▬▭▮▯◆◇◈◉◊○◌◍◎●◐◑◒◓◔◕◖◗◘◙◚◛◜◝◞◟◠◡◢◣◤◥◦◧◨◩◪◫◬◭◮◯☀☁☂☃☄★☆☇☈☉☊☋☌☍☎☏☐☑☒☓☖☗☘☙☚☛☜☝☞☟☠☡☢☣☤☥☦☧☨☩☪☫☬☭☮☯☰☱☲☳☴☵☶☷☸☹☺☻☼☽☾☿♀♁♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓"
-      const fontSize = 18
-      const columns = canvas.width / fontSize
-      const drops = Array(Math.floor(columns)).fill(1)
-
-      function drawGlyphs() {
-        const theme = document.body.getAttribute("data-theme") || "hyper"
-
-        // Theme-specific colors
-        let bgFade, glyphColor
-        if (theme === "matrix") {
-          bgFade = "rgba(0, 0, 0, 0.05)"
-          glyphColor = "rgba(0, 255, 65, 0.8)"
-        } else if (theme === "synth") {
-          bgFade = "rgba(10, 0, 20, 0.05)"
-          // Alternate between hot pink and cyan for that classic synthwave look
-          glyphColor = Math.random() > 0.5 ? "rgba(255, 0, 110, 0.8)" : "rgba(0, 245, 255, 0.8)"
-        } else {
-          // aqua
-          bgFade = "rgba(248, 255, 254, 0.05)"
-          glyphColor = "rgba(64, 224, 208, 0.8)"
-        }
-
-        ctx.fillStyle = bgFade
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-        ctx.fillStyle = glyphColor
-        ctx.font = fontSize + "px monospace"
-
-        for (let i = 0; i < drops.length; i++) {
-          const text = glyphs[Math.floor(Math.random() * glyphs.length)]
-          ctx.fillText(text, i * fontSize, drops[i] * fontSize)
-
-          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0
-          }
-          drops[i]++
-        }
-      }
-
-      setInterval(drawGlyphs, 40)
-
-      window.addEventListener("resize", () => {
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
-      })
-
-      // Theme Switcher
-      const themeButtons = document.querySelectorAll(".theme-btn")
-      const body = document.body
-
-      // Load saved theme or default to aqua
-      const savedTheme = localStorage.getItem("portfolio-theme") || "aqua"
-      body.setAttribute("data-theme", savedTheme)
-
-      // Update button states on load
-      themeButtons.forEach((b) => b.classList.remove("active"))
-      document.querySelector(`[data-theme="${savedTheme}"]`).classList.add("active")
-
-      themeButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const theme = btn.getAttribute("data-theme")
-          body.setAttribute("data-theme", theme)
-          localStorage.setItem("portfolio-theme", theme)
-
-          // Update active state
-          themeButtons.forEach((b) => b.classList.remove("active"))
-          btn.classList.add("active")
-
-          // Update canvas color based on theme
-          updateCanvasColor()
-        })
-      })
-
-      function updateCanvasColor() {
-        // This will be picked up by the draw function
-      }
-
-      // Window management buttons
-      const terminal = document.getElementById("terminal")
-      const closeBtn = document.querySelector(".terminal-button.close")
-      const minimizeBtn = document.querySelector(".terminal-button.minimize")
-      const maximizeBtn = document.querySelector(".terminal-button.maximize")
-
-      let isMaximized = false
-      let isMinimized = false
-
-      // Close button - fade out and hide
-      closeBtn.addEventListener("click", () => {
-        terminal.style.transition = "opacity 0.5s ease, transform 0.5s ease"
-        terminal.style.opacity = "0"
-        terminal.style.transform = "translate(-50%, -50%) scale(0.8)"
-        setTimeout(() => {
-          terminal.style.display = "none"
-          // Reload after 2 seconds to bring it back
-          setTimeout(() => location.reload(), 2000)
-        }, 500)
-      })
-
-      // Minimize button - shrink to bottom
-      minimizeBtn.addEventListener("click", () => {
-        const terminalBody = terminal.querySelector(".terminal-body")
-
-        if (isMinimized) {
-          // Restore from minimized state to normal - remove ALL inline styles
-          terminal.removeAttribute("style")
-          terminalBody.removeAttribute("style")
-          isMinimized = false
-          isMaximized = false
-        } else {
-          // Minimize to bottom
-          terminal.style.width = "400px"
-          terminal.style.maxWidth = "400px"
-          terminal.style.height = "auto"
-          terminal.style.top = "auto"
-          terminal.style.bottom = "20px"
-          terminal.style.transform = "translate(-50%, 0)"
-          terminalBody.style.display = "none"
-          terminal.style.borderRadius = "8px"
-          isMinimized = true
-        }
-      })
-
-      // Maximize button - toggle fullscreen
-      maximizeBtn.addEventListener("click", () => {
-        const terminalBody = terminal.querySelector(".terminal-body")
-
-        if (isMaximized) {
-          // Restore from maximized state - remove ALL inline styles
-          terminal.removeAttribute("style")
-          terminalBody.removeAttribute("style")
-          isMaximized = false
-          isMinimized = false
-        } else {
-          // Maximize to fullscreen
-          terminal.style.width = "98vw"
-          terminal.style.maxWidth = "98vw"
-          terminal.style.height = "98vh"
-          terminal.style.maxHeight = "98vh"
-          terminal.style.borderRadius = "0"
-          terminalBody.style.display = "block"
-          isMaximized = true
-        }
-      })
-    </script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#cdc0d4">
+  <meta name="description" content="Explore Nate Mueller's world of games, apps, and experiments. Find the temples. Wake the portals.">
+  <title>Nate Mueller — Somewhere, something is waking up.</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="main.css">
+  <script type="module" src="world.js"></script>
+</head>
+<body>
+  <main id="world" aria-label="An explorable isometric world of ancient temples">
+    <canvas id="scene" tabindex="0" aria-label="Drag to explore the 3D map. Use arrow keys to pan, plus and minus to zoom. Use the places menu to visit any project."></canvas>
+    <div id="landmarks" aria-label="Temples in the world"></div>
+    <div class="atmosphere" aria-hidden="true"></div>
+  </main>
+  <header class="masthead">
+    <a class="name" href="#home" id="home">Nate Mueller<span>Games, apps &amp; other worlds.</span></a>
+    <nav aria-label="Portfolio navigation"><button id="about-button">About</button><button id="index-button" aria-expanded="false" aria-controls="places">All places <span aria-hidden="true">☷</span></button></nav>
+  </header>
+  <nav id="island-nav" aria-label="Choose an island"></nav>
+  <div class="intro" id="intro"><h1>Three islands.<br><em>Different worlds.</em></h1><p>A few things I've made,<br>scattered across an archipelago.</p><span class="explore-hint"><span aria-hidden="true">✣</span> Drag to explore. Find a portal.</span></div>
+  <div class="discovery" id="discovery" role="status" aria-live="polite"></div>
+  <aside id="places" class="places" aria-label="All places" hidden>
+    <div class="places-heading"><h2>Places to find</h2><button id="close-places" aria-label="Close places">×</button></div>
+    <p>Every ruin leads somewhere.</p>
+    <div id="places-list"></div>
+    <button id="new-walk" class="new-walk">Start a new walk</button>
+    <a class="contact-link" href="https://t.me/c0rv0s" target="_blank" rel="noopener noreferrer">Say hello ↗</a>
+  </aside>
+  <dialog id="project" aria-labelledby="project-title">
+    <button id="close-project" class="close" aria-label="Close project preview">×</button>
+    <div id="project-art" class="project-art"><canvas id="preview-scene" aria-label="A view of the discovered temple"></canvas><span id="project-symbol" aria-hidden="true">✧</span></div>
+    <div class="project-copy"><p id="project-kind"></p><h2 id="project-title"></h2><p id="project-description"></p><p id="project-note"></p><div class="project-links"><a id="project-link" target="_blank" rel="noopener noreferrer">Visit project <span aria-hidden="true">↗</span></a><button id="keep-exploring">Keep exploring</button></div></div>
+  </dialog>
+  <footer class="world-footer"><div class="journey"><span class="journey-mark" aria-hidden="true">◇</span><span id="region-name">The archipelago</span><span class="region-divider">/</span><span id="progress">0 of 10 places found</span></div><div class="world-tools"><button id="sound" aria-pressed="false" aria-label="Turn ambient sound on">Sound off</button><span class="tool-divider"></span><button id="zoom-out" aria-label="Zoom out">−</button><button id="reset-view" aria-label="Return to the starting view">⌂</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="time" aria-label="Switch to night" aria-pressed="false">Dusk</button></div></footer>
+  <div id="loading" role="status"><span class="loading-glyph" aria-hidden="true">◇</span><p>A world is taking shape.</p><span>One moment.</span></div>
+  <section id="fallback" hidden><h1>Nate Mueller</h1><p>The 3D world couldn't start on this device. You can still explore my work.</p><a href="https://mossbell.netlify.app/">Mossbell ↗</a><a href="https://trylumina.today/">Lumina ↗</a><a href="https://apps.apple.com/us/app/glass-aquarium/id6761319262">Glass Aquarium ↗</a><a href="https://deadfrequency.rip/">Dead Frequency ↗</a><a href="https://nerf-arena-blast-revival.up.railway.app/">Nerf Arena Blast ↗</a><a href="https://apps.apple.com/us/app/mold-marauder/id1505605329">Mold Marauder ↗</a><a href="https://github.com/c0rv0s">GitHub ↗</a><a href="https://x.com/c0rv0s">X ↗</a><a href="https://t.me/c0rv0s">Contact / Telegram ↗</a></section>
+  <noscript><style>#loading,.intro,.world-footer{display:none}#fallback[hidden]{display:grid!important}</style></noscript>
+  <script>window.addEventListener('error', function(e) { if (e.filename && /world\.js|three\./.test(e.filename)) { document.getElementById('loading').hidden=true; document.getElementById('fallback').hidden=false; } });</script>
+</body>
 </html>

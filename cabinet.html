@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ece9e1">
+  <meta name="description" content="Nate Mueller's cabinet of living things. Small worlds, unusual games, and things made with care.">
+  <title>Nate Mueller — A cabinet of living things</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="preload" as="image" href="images/cabinet/garden.jpg">
+  <link rel="stylesheet" href="cabinet.css">
+  <script src="cabinet.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="signature" href="#" aria-label="Nate Mueller, home">Nate Mueller<span class="signature-dot">.</span></a>
+    <nav aria-label="Main navigation"><a href="#work">Selected work <span aria-hidden="true">↗</span></a><button data-open="about">A little about me</button></nav>
+  </header>
+  <main>
+    <section class="cabinet" aria-labelledby="cabinet-title">
+      <div class="introduction">
+        <h1 id="cabinet-title">A cabinet<br>of <em>living</em><br> things.</h1>
+        <p class="intro-copy">I make little worlds.<br>Some of them fit in your pocket.<br>This one can hold a memory.</p>
+        <form id="memory-form">
+          <label for="memory">Give it something to remember.</label>
+          <div class="input-line"><input id="memory" name="memory" maxlength="160" placeholder="A place. A moment. Someone." autocomplete="off" required><button type="submit" aria-label="Add this memory to the cabinet"><span aria-hidden="true">↗</span></button></div>
+          <p class="try-label">Or borrow a memory</p>
+          <div class="suggestions"><button type="button" data-memory="My grandmother’s swimming pool">A summer pool</button><button type="button" data-memory="The light left on at home">A light left on</button><button type="button" data-memory="The garden after the rain">After the rain</button></div>
+        </form>
+        <div class="small-actions"><button data-open="collection">Your collection <span id="memory-count">0</span></button><button data-open="process">How it works <span aria-hidden="true">↗</span></button></div>
+      </div>
+      <div class="specimen">
+        <div class="specimen-stage" id="stage" role="img" aria-label="A glass bell jar holding a floating moss island with a tree and a tiny pool">
+          <img class="world-image visible" id="world-a" src="images/cabinet/garden.jpg" alt="" fetchpriority="high" width="1254" height="1254">
+          <img class="world-image" id="world-b" src="images/cabinet/garden.jpg" alt="" width="1254" height="1254">
+          <canvas id="life" aria-hidden="true"></canvas>
+          <div class="specimen-coordinate" aria-hidden="true"><span>Fig. <span id="figure-number">01</span></span><span>A study in remembering</span></div>
+        </div>
+        <div class="specimen-caption" aria-live="polite" aria-atomic="true"><div><span class="status-dot" aria-hidden="true"></span><span id="world-title">A place to begin</span><p id="world-description">A small wilderness, waiting for a memory.</p></div><button id="pause" aria-pressed="false" aria-label="Pause the living particles">Pause life <span aria-hidden="true">Ⅱ</span></button></div>
+        <p class="save-note" id="save-note">Your memories stay in this browser.</p>
+      </div>
+    </section>
+    <section class="work" id="work" aria-labelledby="work-title">
+      <h2 id="work-title">Other things I've brought to life<span aria-hidden="true">↓</span></h2>
+      <a class="work-item" href="https://mossbell.netlify.app/" target="_blank" rel="noopener noreferrer"><span class="work-number">01</span><h3>Mossbell</h3><p>A small life to grow into.<span>A cozy gardening &amp; life simulator · Coming soon</span></p><span class="work-arrow" aria-hidden="true">↗</span></a>
+      <a class="work-item" href="https://trylumina.today/" target="_blank" rel="noopener noreferrer"><span class="work-number">02</span><h3>Lumina</h3><p>Make room for what could be.<span>A manifestation &amp; astrology journal</span></p><span class="work-arrow" aria-hidden="true">↗</span></a>
+      <a class="work-item" href="https://apps.apple.com/us/app/glass-aquarium/id6761319262" target="_blank" rel="noopener noreferrer"><span class="work-number">03</span><h3>Glass Aquarium</h3><p>Sing. See who swims over.<span>An aquarium widget with fish chosen by your voice</span></p><span class="work-arrow" aria-hidden="true">↗</span></a>
+      <details class="more-work"><summary>A few more experiments <span aria-hidden="true">+</span></summary><div><a href="https://deadfrequency.rip/" target="_blank" rel="noopener noreferrer">Dead Frequency <span>A haunted space roguelike ↗</span></a><a href="https://nerf-arena-blast-revival.up.railway.app/" target="_blank" rel="noopener noreferrer">Nerf Arena Blast <span>A revival of the classic arena game ↗</span></a><a href="https://apps.apple.com/us/app/mold-marauder/id1505605329" target="_blank" rel="noopener noreferrer">Mold Marauder <span>Breed exotic slime molds ↗</span></a></div></details>
+    </section>
+  </main>
+  <footer><p>Made by Nate. Still curious.</p><div><a href="https://github.com/c0rv0s" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://twitter.com/c0rv0s" target="_blank" rel="noopener noreferrer">Twitter ↗</a><a href="https://t.me/c0rv0s" target="_blank" rel="noopener noreferrer">Say hello ↗</a></div></footer>
+  <dialog id="about" aria-labelledby="about-title"><button class="close-dialog" aria-label="Close about">×</button><h2 id="about-title">Hello, I'm Nate.</h2><p>I build games, apps, onchain systems, and small experiments that follow whatever I'm curious about.</p><p>Previously at dOrg, Hype Labs, and Bonsai. Lately, I've been exploring how much of an imagined world one person can bring to life with AI.</p><p>This cabinet is one of those experiments.</p><a href="https://t.me/c0rv0s" target="_blank" rel="noopener noreferrer">Come say hello ↗</a></dialog>
+  <dialog id="process" aria-labelledby="process-title"><button class="close-dialog" aria-label="Close how it works">×</button><h2 id="process-title">Inside the glass.</h2><p>This first study combines AI-generated specimen artwork with a small simulation running in your browser.</p><p>Your words choose between three authored worlds: a garden, a pool, and a light left on at home. Each memory gives the drifting particles their own movement and color.</p><p>There is no live AI generation yet. The artwork is fixed; the atmosphere responds. Memories are saved only on this device and aren't sent to a server.</p><p>I'm interested in what happens when these worlds can grow their own histories. This is the beginning.</p></dialog>
+  <dialog id="collection" aria-labelledby="collection-title"><button class="close-dialog" aria-label="Close collection">×</button><h2 id="collection-title">Things remembered.</h2><p id="collection-description">Little worlds you've left here. Select one to return.</p><div id="saved-memories"></div><button id="clear-memories" class="text-button">Forget all memories</button></dialog>
+  <noscript><p class="noscript">The cabinet's memory interaction needs JavaScript. You can still explore all the projects below.</p></noscript>
+</body>
+</html>
