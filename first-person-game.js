@@ -1,7 +1,7 @@
 import * as THREE from './vendor/three.module.js';
 import {CollisionWorld,Walker} from './game-physics.js';
 
-export async function createGame({scene,camera,blocks,places,islandAt,onProgress,onSwordHit=()=>false}){
+export async function createGame({scene,camera,blocks,places,islandAt,onProgress,onSwordHit=()=>false,onSound=()=>{}}){
   onProgress('Preparing the paths…');
   await new Promise(requestAnimationFrame);
   const collision=new CollisionWorld(blocks),player=new Walker(collision);
@@ -87,10 +87,10 @@ export async function createGame({scene,camera,blocks,places,islandAt,onProgress
     player.spawn(x,y,z);camera.position.set(x,y+1.55,z);camera.lookAt(p.x,p.h+3.8,p.z-2);
   }
   function healthUI(){meter.value=health;number.textContent=String(health);}
-  function respawn(){health=100;invincible=2;attackTime=0;spawn(home);healthUI();for(const e of enemies){if(e.hp<=0)continue;e.group.position.copy(e.spawn);e.windup=0;e.cooldown=1;e.active=false;e.knock.set(0,0);}status('Back at the sanctuary. Try again.');}
+  function respawn(){onSound('player-death');health=100;invincible=2;attackTime=0;spawn(home);healthUI();for(const e of enemies){if(e.hp<=0)continue;e.group.position.copy(e.spawn);e.windup=0;e.cooldown=1;e.active=false;e.knock.set(0,0);}status('Back at the sanctuary. Try again.');}
   function attack(ray=null){if(!enabled||paused||attackTime>0)return;attackRay=ray;attackTime=.42;hitApplied=false;}
   function damage(amount,source){if(invincible>0)return;
-    playerKnock.set(player.x-source.x,player.z-source.z);if(playerKnock.lengthSq()<.001)playerKnock.set(0,1);playerKnock.normalize().multiplyScalar(5);health=Math.max(0,health-amount);invincible=.9;healthUI();hud.classList.add('hurt');status('Hit! Keep moving or swing your sword.');if(health===0)respawn();}
+    playerKnock.set(player.x-source.x,player.z-source.z);if(playerKnock.lengthSq()<.001)playerKnock.set(0,1);playerKnock.normalize().multiplyScalar(5);health=Math.max(0,health-amount);invincible=.9;healthUI();hud.classList.add('hurt');status('Hit! Keep moving or swing your sword.');if(health===0)respawn();else onSound('player-hit');}
   function random(e){e.seed=(Math.imul(e.seed,1664525)+1013904223)>>>0;return e.seed/4294967296;}
   function moveEnemy(e,dx,dz,step){
     const pos=e.group.position;
@@ -138,7 +138,7 @@ export async function createGame({scene,camera,blocks,places,islandAt,onProgress
             return target.length()<3.2&&target.normalize().dot(attackRay.direction)>.45;
           })():d<3.2&&Math.abs(e.group.position.y-player.y)<2.3&&(-Math.sin(yaw)*dx-Math.cos(yaw)*dz)/Math.max(.1,d)>.35;
           if(inRange){
-            e.hp--;e.knock.set(dx,dz);if(e.knock.lengthSq()<.001)e.knock.set(-Math.sin(yaw),-Math.cos(yaw));e.knock.normalize().multiplyScalar(6);e.flash=.18;e.bar.visible=true;e.bar.scale.x=.8*e.hp/e.maxHP;e.windup=0;e.cooldown=.65;
+            e.hp--;onSound(e.hp===0?'enemy-death':'enemy-hit');e.knock.set(dx,dz);if(e.knock.lengthSq()<.001)e.knock.set(-Math.sin(yaw),-Math.cos(yaw));e.knock.normalize().multiplyScalar(6);e.flash=.18;e.bar.visible=true;e.bar.scale.x=.8*e.hp/e.maxHP;e.windup=0;e.cooldown=.65;
             status(e.hp>0?'Hit!':`${e.type==='skeleton'?'Skeleton':e.type==='snake'?'Snake':'Spider'} defeated`);
             if(e.hp===0){e.dead=14;e.fallTime=0;e.deathY=e.group.position.y;e.active=false;e.bar.visible=false;e.knock.set(0,0);}
           }

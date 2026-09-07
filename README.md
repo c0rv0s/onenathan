@@ -69,6 +69,7 @@ Background music: user-supplied “Portal Drift” (`audio/portal-drift.m4a`), l
 - Click swings the right-hand sword forward; E opens a portal within reach. A sword swing aimed at a portal within 3.8 units opens the same preview at swing contact and pauses combat immediately. Enemies flash red on successful hits.
 - Skeleton warriors guard About, snakes guard iOS, and spiders guard Games. They chase nearby players within their biome, wind up attacks, deal damage, and can be defeated. Health loss or falling returns the player to their entry sanctuary. Defeated enemies can respawn after a delay when the player is away.
 - Back to map hides the game and restores the original map camera.
+- Sound on enables quiet synthesized combat cues alongside the music: sword impacts, enemy defeats, player damage, and death or falling. The same cues work in VR, and Sound off mutes them.
 
 Validation: `node tests/game-physics.test.mjs` covers double jump, landing reset, wall collision, stairs, and falling. `node tests/game-combat.test.mjs` covers biome enemies, aggro, damage, sword kills, modal pause, and exit. Browser entry/rendering and fallback are verified in the in-app browser, which rejects pointer lock; Chrome automation timed out, so real mouse capture still needs manual verification there.
 

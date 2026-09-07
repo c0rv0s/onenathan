@@ -683,7 +683,7 @@ async function setFirstPerson(enabled){
     gameLoading=true;$('first-person').disabled=true;$('game-loading').hidden=false;
     try{
       const {createGame}=await import('./first-person-game.js');
-      game=await createGame({scene,camera:eyeCamera,blocks:batches.get('land')||[],places,islandAt,onSwordHit:strikePortal,onProgress:text=>$('game-loading-status').textContent=text});
+      game=await createGame({scene,camera:eyeCamera,blocks:batches.get('land')||[],places,islandAt,onSwordHit:strikePortal,onSound:combatSound,onProgress:text=>$('game-loading-status').textContent=text});
     }catch(error){
       console.error('Game could not load',error);$('first-person').textContent='Retry first person';return;
     }finally{gameLoading=false;$('first-person').disabled=false;$('game-loading').hidden=true;}
@@ -798,12 +798,30 @@ document.body.append(soundtrack);
 function updateSoundButton(){
   $('sound').textContent=audioEnabled?'Sound on':'Sound off';
   $('sound').setAttribute('aria-pressed',String(audioEnabled));
-  $('sound').setAttribute('aria-label',audioEnabled?'Turn ambient sound off':'Turn ambient sound on');
+  $('sound').setAttribute('aria-label',audioEnabled?'Turn sound off':'Turn sound on');
 }
 function chime(id){
   if(!audioEnabled||!audioContext)return;
   const notes=[220,261.63,293.66,329.63,392,440,523.25,587.33];const index=places.findIndex(p=>p.id===id);
   [1,1.5,2].forEach((mult,i)=>{const osc=audioContext.createOscillator(),gain=audioContext.createGain(),start=audioContext.currentTime+i*.12;osc.type='sine';osc.frequency.value=notes[index%notes.length]*mult;gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(.035,start+.04);gain.gain.exponentialRampToValueAtTime(.0001,start+2);osc.connect(gain).connect(audioGain);osc.start(start);osc.stop(start+2);});
+}
+// Brief, quiet arcade cues share the music toggle and master effects gain.
+function combatSound(event){
+  if(!audioEnabled||!audioContext||audioContext.state!=='running'||document.hidden)return;
+  const cues={
+    'enemy-hit':[[240,75,.11,0,.24,'triangle'],[680,210,.065,0,.07,'sine']],
+    'enemy-death':[[300,90,.22,0,.2,'triangle'],[440,660,.16,.06,.1,'sine']],
+    'player-hit':[[130,45,.17,0,.25,'triangle']],
+    'player-death':[[220,55,.5,0,.2,'triangle'],[165,41,.5,.06,.1,'sine']]
+  };
+  for(const [from,to,duration,delay,volume,type] of cues[event]||[]){
+    const osc=audioContext.createOscillator(),gain=audioContext.createGain();
+    const start=audioContext.currentTime+delay,end=start+duration;
+    osc.type=type;osc.frequency.setValueAtTime(from,start);osc.frequency.exponentialRampToValueAtTime(to,end);
+    gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(volume,start+.004);gain.gain.exponentialRampToValueAtTime(.0001,end);
+    osc.connect(gain).connect(audioGain);osc.onended=()=>{osc.disconnect();gain.disconnect();};
+    osc.start(start);osc.stop(end+.01);
+  }
 }
 $('sound').addEventListener('click',async()=>{
   $('sound').disabled=true;
