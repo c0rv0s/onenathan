@@ -75,7 +75,7 @@ export async function createGame({scene,camera,blocks,places,islandAt,onProgress
   hud.innerHTML='<div class="game-vitals"><span>Health</span><meter min="0" max="100" value="100" aria-label="Health"></meter><span class="health-number">100</span></div><span class="game-message" role="status" aria-live="polite"></span><span class="game-crosshair" aria-hidden="true">+</span>';
   document.body.append(hud);
   const meter=hud.querySelector('meter'),number=hud.querySelector('.health-number'),message=hud.querySelector('.game-message');
-  let enabled=false,health=100,invincible=0,attackTime=0,hitApplied=false,elapsed=0,home=places[0],paused=false,notice=0;
+  let enabled=false,health=100,invincible=0,attackTime=0,hitApplied=false,elapsed=0,home=places[0],paused=false,notice=0,vrMode=false,attackRay=null;
   const playerKnock=new THREE.Vector2();
   function status(text){message.textContent=text;notice=3;}
   function spawn(p){
@@ -88,7 +88,7 @@ export async function createGame({scene,camera,blocks,places,islandAt,onProgress
   }
   function healthUI(){meter.value=health;number.textContent=String(health);}
   function respawn(){health=100;invincible=2;attackTime=0;spawn(home);healthUI();for(const e of enemies){if(e.hp<=0)continue;e.group.position.copy(e.spawn);e.windup=0;e.cooldown=1;e.active=false;e.knock.set(0,0);}status('Back at the sanctuary. Try again.');}
-  function attack(){if(!enabled||paused||attackTime>0)return;attackTime=.42;hitApplied=false;}
+  function attack(ray=null){if(!enabled||paused||attackTime>0)return;attackRay=ray;attackTime=.42;hitApplied=false;}
   function damage(amount,source){if(invincible>0)return;
     playerKnock.set(player.x-source.x,player.z-source.z);if(playerKnock.lengthSq()<.001)playerKnock.set(0,1);playerKnock.normalize().multiplyScalar(5);health=Math.max(0,health-amount);invincible=.9;healthUI();hud.classList.add('hurt');status('Hit! Keep moving or swing your sword.');if(health===0)respawn();}
   function random(e){e.seed=(Math.imul(e.seed,1664525)+1013904223)>>>0;return e.seed/4294967296;}
@@ -103,21 +103,23 @@ export async function createGame({scene,camera,blocks,places,islandAt,onProgress
     }
     return false;
   }
-  function update(dt,keys,isPaused){
+  function update(dt,keys,isPaused,vrInput=null){
     paused=isPaused;
     if(!enabled)return;
+    // Room-scale tracking remains live while gameplay is paused.
+    if(vrInput)player.move(vrInput.trackedX||0,vrInput.trackedZ||0,0);
     hud.classList.toggle('paused',paused);
     if(paused){keys.clear();return;}
     const currentEnemies=enemiesByIsland.get(islandAt(player.x,player.z)?.id)||[];
     elapsed+=dt;notice=Math.max(0,notice-dt);if(!notice)message.textContent='';
     invincible=Math.max(0,invincible-dt);if(invincible<.65)hud.classList.remove('hurt');
     const down=(...k)=>k.some(v=>keys.has(v))?1:0;
-    const f=down('w','arrowup')-down('s','arrowdown'),s=down('d','arrowright')-down('a','arrowleft'),yaw=camera.rotation.y;
+    const f=vrInput?vrInput.forward:down('w','arrowup')-down('s','arrowdown'),s=vrInput?vrInput.side:down('d','arrowright')-down('a','arrowleft'),yaw=vrInput?vrInput.yaw:camera.rotation.y;
     const length=Math.max(1,Math.hypot(f,s)),speed=keys.has('shift')?9.5:6;
     player.move(((-Math.sin(yaw)*f+Math.cos(yaw)*s)/length*speed+playerKnock.x)*dt,((-Math.cos(yaw)*f-Math.sin(yaw)*s)/length*speed+playerKnock.y)*dt,dt);
     playerKnock.multiplyScalar(Math.exp(-dt*7));
     if(player.y<-32)respawn();
-    camera.position.set(player.x,player.y+1.55,player.z);
+    if(!vrMode)camera.position.set(player.x,player.y+1.55,player.z);
     if(attackTime>0){
       attackTime=Math.max(0,attackTime-dt);
       const swing=Math.sin((1-attackTime/.42)*Math.PI);
@@ -126,12 +128,16 @@ export async function createGame({scene,camera,blocks,places,islandAt,onProgress
         hitApplied=true;
         // Resolve portal interaction at the contact point of the swing, then
         // stop this frame before enemies can deal damage behind the preview.
-        if(onSwordHit()){
+        if(onSwordHit(attackRay)){
           attackTime=0;paused=true;keys.clear();return;
         }
         for(const e of currentEnemies){
           if(e.hp<=0)continue;const dx=e.group.position.x-player.x,dz=e.group.position.z-player.z,d=Math.hypot(dx,dz);
-          if(d<3.2&&Math.abs(e.group.position.y-player.y)<2.3&&(-Math.sin(yaw)*dx-Math.cos(yaw)*dz)/Math.max(.1,d)>.35){
+          const inRange=attackRay?(()=>{
+            const target=e.group.position.clone().add(new THREE.Vector3(0,e.type==='skeleton'?1:.4,0)).sub(attackRay.origin);
+            return target.length()<3.2&&target.normalize().dot(attackRay.direction)>.45;
+          })():d<3.2&&Math.abs(e.group.position.y-player.y)<2.3&&(-Math.sin(yaw)*dx-Math.cos(yaw)*dz)/Math.max(.1,d)>.35;
+          if(inRange){
             e.hp--;e.knock.set(dx,dz);if(e.knock.lengthSq()<.001)e.knock.set(-Math.sin(yaw),-Math.cos(yaw));e.knock.normalize().multiplyScalar(6);e.flash=.18;e.bar.visible=true;e.bar.scale.x=.8*e.hp/e.maxHP;e.windup=0;e.cooldown=.65;
             status(e.hp>0?'Hit!':`${e.type==='skeleton'?'Skeleton':e.type==='snake'?'Snake':'Spider'} defeated`);
             if(e.hp===0){e.dead=14;e.fallTime=0;e.deathY=e.group.position.y;e.active=false;e.bar.visible=false;e.knock.set(0,0);}
@@ -219,6 +225,8 @@ export async function createGame({scene,camera,blocks,places,islandAt,onProgress
     enter(p){enabled=true;root.visible=true;hand.visible=true;hud.hidden=false;paused=false;health=100;healthUI();invincible=1.5;spawn(p);status('Space to jump. Again to double jump. Click to swing.');},
     exit(){enabled=false;root.visible=false;hand.visible=false;hud.hidden=true;attackTime=0;},
     jump(){if(enabled&&!paused)player.jump();},attack,update,
+    setVR(value){vrMode=value;hand.visible=enabled&&!value;light.visible=!value;hud.hidden=!enabled||value;},
+    getPlayer(){return {x:player.x,y:player.y,z:player.z,health};},
     // Read-only snapshots support deterministic game verification without exposing controls.
     snapshot(){return {health,paused,enabled,position:{x:player.x,y:player.y,z:player.z},grounded:player.grounded,jumps:player.jumps,enemies:enemies.map(e=>({type:e.type,hp:e.hp,active:e.active,island:e.island,wanderState:e.wanderState,wanderTimer:e.wanderTimer,fallTime:e.fallTime,visible:e.group.visible,roll:e.group.rotation.z,x:e.group.position.x,y:e.group.position.y,z:e.group.position.z}))};}
   };

@@ -169,3 +169,6 @@ body.night #island-nav { background: #41395fdd; color: #e8deed; }
 #pointer-prompt[hidden]{display:none}#pointer-prompt button{pointer-events:auto;background:#eee5e4;color:#51415f;border-radius:6px;padding:16px 28px;font-size:17px;box-shadow:0 4px 30px #30263925}
 #pointer-prompt p{background:#eee5e4e8;color:#51415f;padding:8px 12px;border-radius:4px;font-size:12px}#pointer-fallback{margin-top:8px}
 @media(pointer:fine){.first-person #flight-controls>div{display:none}}
+
+.in-vr #flight-controls,.in-vr #pointer-prompt,.in-vr #landmarks,.in-vr #game-hud{display:none!important}
+#vr-button:disabled{opacity:.55;cursor:default}

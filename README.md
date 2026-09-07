@@ -75,3 +75,15 @@ Validation: `node tests/game-physics.test.mjs` covers double jump, landing reset
 Monsters wander between nearby destinations, rest, and interrupt wandering to chase. Defeated skeletons fall sideways; snakes and spiders roll over and remain visible until an out-of-sight respawn. Monster updates are grouped by island: only the player's current island advances AI, hit flashes, death animations, and respawn timers. Combat tests cover visible fallen bodies, wandering/resting, and exact state preservation on inactive islands.
 
 First-person sky rendering reconstructs camera rays and projects clouds onto a distant world-space sphere. The isometric map and temple previews retain the original aspect-fitted cloud image and gentle drift.
+
+## VR / Oculus Rift + Touch
+
+Enter First person, then Enter VR. This uses an immersive WebXR session with a `local-floor` reference space; it requires a headset exposed by the browser and HTTPS (or localhost on the headset-connected computer). A Rift should be connected to its PC with the PC VR runtime running. The desktop in-app preview reports No VR headset when no immersive device is exposed. VR is not streamed from the Mac preview to a Rift PC; use the site on the PC itself. Nothing has been deployed by this change.
+
+`vr-mode.js` and `vr-input.js` load only after requesting VR. The renderer uses `setAnimationLoop` for XR-synchronized frames. The existing game supplies movement, double jump, collisions, health, combat, and island-local enemy simulation. Touch controls use `xr-standard`: left stick movement, left grip sprint, right stick 30-degree snap turns, A jump/double jump, B pause menu. The right controller carries a tracked sword; right trigger or a fast physical blade movement attacks. Either controller can point at a portal and select it. Headset panels pause combat and offer Resume or View link on desktop; the latter exits VR into the regular project preview. Health appears on the left wrist.
+
+Session exit removes controller listeners and VR-only geometry/textures, restores the desktop camera, and resumes the normal first-person UI. Headset visibility loss pauses simulation. The sky uses each XR eye's projection. The camera-mounted desktop sword/light is hidden in VR.
+
+Tests: `node tests/vr.test.mjs` covers input mapping, deadzones, snap-turn edges, jump edges, trigger attacks, portal pause, and cleanup with a **mock XR session**. Existing physics/combat tests pass. Desktop fallback is browser-verified. Real Rift tracking, stereo rendering, button mapping on the user's runtime, and sustained frame rate remain unverified without connected hardware.
+
+Implementation references: [Three.js WebXR basics](https://threejs.org/manual/en/webxr-basics.html), [WebXRManager](https://threejs.org/docs/pages/WebXRManager.html), and [WebXR input/gamepad mapping](https://developer.mozilla.org/en-US/docs/Web/API/XRInputSource/gamepad).

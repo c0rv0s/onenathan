@@ -88,6 +88,7 @@ const mapCamera=camera;
 const eyeCamera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,800);
 eyeCamera.rotation.order='YXZ';
 let firstPerson=false;
+let vr=null,vrStarting=false;
 const flightKeys=new Set();
 const target = new THREE.Vector3(aboutPlace.x,aboutPlace.h+2,aboutPlace.z+3);
 const desiredTarget = target.clone();
@@ -312,6 +313,7 @@ cloudBackdrop.onBeforeRender=(_renderer,_scene,viewCamera)=>{
   cloudMaterial.uniforms.uInverseProjection.value.copy(viewCamera.projectionMatrixInverse);
   cloudMaterial.uniforms.uCameraWorld.value.copy(viewCamera.matrixWorld);
   cloudMaterial.uniforms.uPerspective.value=viewCamera.isPerspectiveCamera?1:0;
+  cloudMaterial.uniformsNeedUpdate=true;
   cloudMaterial.uniforms.uAspect.value=viewCamera.isPerspectiveCamera?viewCamera.aspect:(viewCamera.right-viewCamera.left)/(viewCamera.top-viewCamera.bottom);
 };
 cloudBackdrop.frustumCulled=false;cloudBackdrop.renderOrder=-10000;scene.add(cloudBackdrop);
@@ -537,6 +539,7 @@ const petalGeometry=new THREE.BufferGeometry();petalGeometry.setAttribute('posit
 const petals=new THREE.Points(petalGeometry,new THREE.PointsMaterial({color:'#f7d9de',size:.09,transparent:true,opacity:.7,sizeAttenuation:true}));scene.add(petals);
 
 function updateCamera() {
+  if(vr?.active)return;
   if(firstPerson){eyeCamera.aspect=innerWidth/innerHeight;eyeCamera.updateProjectionMatrix();eyeCamera.updateMatrixWorld();return;}
   const aspect=innerWidth/innerHeight;
   camera.left=-viewSize*aspect/2;camera.right=viewSize*aspect/2;camera.top=viewSize/2;camera.bottom=-viewSize/2;
@@ -561,6 +564,7 @@ function travel(state) {
   openProject(state);
 }
 function openProject(state) {
+  if(vr?.active){discover(state);vr.showPortal(state.place);return;}
   flightKeys.clear();
   if(document.pointerLockElement===canvas)document.exitPointerLock();
   explore();discover(state);
@@ -654,12 +658,12 @@ canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();$('fallback').
 let game=null,gameLoading=false;
 let dragFallback=false;
 const mouseLook=matchMedia('(pointer: fine)');
-function pointerPaused(){return firstPerson&&mouseLook.matches&&!dragFallback&&document.pointerLockElement!==canvas;}
+function pointerPaused(){return !vr?.active&&!vrStarting&&firstPerson&&mouseLook.matches&&!dragFallback&&document.pointerLockElement!==canvas;}
 function updatePointerPrompt(){
   $('pointer-prompt').hidden=!pointerPaused()||$('project').open;
 }
 async function lockPointer(){
-  if(!firstPerson||!mouseLook.matches||dragFallback)return;
+  if(vr?.active||vrStarting||!firstPerson||!mouseLook.matches||dragFallback)return;
   try{await canvas.requestPointerLock();}
   catch{$('pointer-note').textContent='Mouse capture is unavailable here. You can still use drag controls.';$('pointer-fallback').hidden=false;}
 }
@@ -673,7 +677,8 @@ document.addEventListener('mousemove',e=>{
   eyeCamera.rotation.x=clamp(eyeCamera.rotation.x-e.movementY*.0025,-1.4,1.4);
 });
 async function setFirstPerson(enabled){
-  if(gameLoading)return;
+  if(gameLoading||vrStarting)return;
+  if(!enabled&&vr?.active)await vr.end();
   if(enabled&&!game){
     gameLoading=true;$('first-person').disabled=true;$('game-loading').hidden=false;
     try{
@@ -688,6 +693,8 @@ async function setFirstPerson(enabled){
   $('first-person').textContent=enabled?'Back to map':'First person';
   $('first-person').setAttribute('aria-pressed',String(enabled));
   $('flight-controls').hidden=!enabled;
+  $('vr-button').hidden=!enabled;
+  if(enabled)checkVR();
   if(enabled){
     closePlaces();explore();
     const p=places.reduce((a,b)=>Math.hypot(b.x-target.x,b.z-target.z)<Math.hypot(a.x-target.x,a.z-target.z)?b:a);
@@ -705,7 +712,8 @@ function interactPortal(){
   const nearby=portalObjects.filter(s=>s.portal.position.distanceTo(eyeCamera.position)<8).sort((a,b)=>a.portal.position.distanceTo(eyeCamera.position)-b.portal.position.distanceTo(eyeCamera.position));
   if(nearby[0])openProject(nearby[0]);
 }
-function strikePortal(){
+function strikePortal(attackRay=null){
+  if(attackRay)return portalFromVRRay(attackRay,3.8);
   if(!firstPerson||$('project').open)return false;
   // Aim at the portal surface, with the same short reach as a sword swing.
   eyeCamera.updateMatrixWorld();
@@ -736,8 +744,46 @@ $('game-jump').addEventListener('click',()=>{game?.jump();canvas.focus();});
 $('game-attack').addEventListener('click',()=>{game?.attack();canvas.focus();});
 $('game-interact').addEventListener('click',interactPortal);
 function updateFlight(dt){
+  if(vr?.active){vr.update(dt);return;}
   if(firstPerson)game?.update(dt,flightKeys,$('project').open||!$('places').hidden||pointerPaused());
 }
+
+// Immersive support is checked only after the optional first-person game opens.
+async function checkVR(){
+  const button=$('vr-button');button.disabled=true;
+  if(!window.isSecureContext){button.textContent='VR needs HTTPS';button.title='Use HTTPS or localhost for immersive VR.';return;}
+  if(!navigator.xr){button.textContent='VR unavailable';button.title='Open this site in a WebXR-capable browser on your Rift-connected PC.';return;}
+  try{const supported=await navigator.xr.isSessionSupported('immersive-vr');button.disabled=!supported;button.textContent=supported?'Enter VR':'No VR headset';button.title=supported?'Oculus Rift / Touch via WebXR':'Connect your headset and enable your PC VR runtime, then reopen first person.';}
+  catch{button.textContent='VR unavailable';}
+}
+function portalFromVRRay(ray,reach){
+  raycaster.set(ray.origin,ray.direction);
+  const hit=raycaster.intersectObjects(hitTargets)[0];
+  if(!hit||hit.distance>reach)return false;
+  const state=portalObjects.find(s=>s.portal===hit.object);if(!state)return false;
+  openProject(state);return true;
+}
+$('vr-button').addEventListener('click',async()=>{
+  if(vr?.active){await vr.end();return;}
+  if(vrStarting||!game||!navigator.xr)return;
+  vrStarting=true;$('vr-button').disabled=true;$('vr-button').textContent='Starting VR…';
+  let session;
+  try{
+    // Request during the user gesture; import the VR implementation afterward.
+    session=await navigator.xr.requestSession('immersive-vr',{requiredFeatures:['local-floor']});
+    if(document.pointerLockElement===canvas)document.exitPointerLock();
+    $('project').close();pendingPreview=false;flightKeys.clear();
+    const {createVR}=await import('./vr-mode.js');
+    vr=await createVR({renderer,scene,camera:eyeCamera,game,session,onPortalRay:portalFromVRRay,
+      onExit:()=>{vr=null;document.body.classList.remove('in-vr');$('vr-button').textContent='Enter VR';$('vr-button').disabled=false;updatePointerPrompt();},
+      onDesktopPortal:p=>openProject(portalObjects.find(s=>s.place.id===p.id))});
+    document.body.classList.add('in-vr');$('vr-button').textContent='Exit VR';
+  }catch(error){
+    if(session)await session.end().catch(()=>{});
+    $('vr-button').textContent='Retry VR';$('vr-button').title=error.message;
+    $('discovery').textContent='VR could not start. Check your headset connection and browser VR support.';$('discovery').classList.add('visible');
+  }finally{vrStarting=false;$('vr-button').disabled=false;updatePointerPrompt();}
+});
 
 // Audio is entirely local and starts only when explicitly switched on.
 let audioContext=null,audioGain=null,audioEnabled=false;
@@ -811,8 +857,7 @@ const daySky=new THREE.Color('#efe5ff'),nightSky=new THREE.Color('#9dacf5');
 let last=performance.now();
 let frameCount=0;
 function animate(now) {
-  requestAnimationFrame(animate);
-  if(document.hidden){last=now;return;}
+  if(document.hidden&&!renderer.xr.isPresenting){last=now;return;}
   const dt=Math.min((now-last)/1000,.06);last=now;
   if(!reducedMotion.matches)time+=dt;
   const blend=reducedMotion.matches?1:1-Math.exp(-dt*7);
@@ -826,13 +871,13 @@ function animate(now) {
   updateCamera();
   $('zoom-out').disabled=desiredSize>=MAX_VIEW_SIZE-.01;
   $('zoom-in').disabled=desiredSize<=MIN_VIEW_SIZE+.01;
-  const explorer=firstPerson?eyeCamera.position:target;
+  const explorer=vr?.active?vr.getPosition():firstPerson?eyeCamera.position:target;
   const currentIsland=islandAt(explorer.x,explorer.z);
   $('region-name').textContent=currentIsland?currentIsland.biome:'The old crossings';
   for(const button of $('island-nav').children)button.setAttribute('aria-pressed',String(button.dataset.island===currentIsland?.id));
   for(const state of portalObjects){
     const distance=Math.hypot(explorer.x-state.place.x,explorer.z-state.place.z);
-    if(interacted&&distance<6.5&&!$('project').open)discover(state);
+    if(interacted&&distance<6.5&&!$('project').open&&!vr?.paused)discover(state);
     const isNear=distance<9;
     const power=hovered===state||isNear&&found.has(state.place.id)?1:found.has(state.place.id)?.55:0;
     state.power=THREE.MathUtils.lerp(state.power,power,reducedMotion.matches?1:1-Math.exp(-dt*3));
@@ -841,12 +886,12 @@ function animate(now) {
     projected.copy(state.anchor).project(camera);
     const screenX=(projected.x*.5+.5)*innerWidth,screenY=(-projected.y*.5+.5)*innerHeight;
     state.button.style.left=`${screenX}px`;state.button.style.top=`${screenY}px`;
-    const visible=(!firstPerson||state.portal.position.distanceTo(eyeCamera.position)<8)&&projected.z>=-1&&projected.z<=1&&screenX>20&&screenX<innerWidth-20&&screenY>85&&screenY<innerHeight-75;
+    const visible=!vr?.active&&(!firstPerson||state.portal.position.distanceTo(eyeCamera.position)<8)&&projected.z>=-1&&projected.z<=1&&screenX>20&&screenX<innerWidth-20&&screenY>85&&screenY<innerHeight-75;
     state.button.hidden=!visible;state.button.classList.toggle('near',isNear&&found.has(state.place.id));
   }
   if(!reducedMotion.matches){petals.position.x=Math.sin(time*.06)*1.5;petals.position.y=-time*.07%8;petals.position.z=Math.cos(time*.05)*.8;}
-  if(pendingPreview){renderPreview(pendingPreview);pendingPreview=false;}
+  if(pendingPreview&&!vr?.active){renderPreview(pendingPreview);pendingPreview=false;}
   renderer.render(scene,camera);
   if(frameCount++===2){$('loading').classList.add('leaving');setTimeout(()=>$('loading').hidden=true,750);}
 }
-requestAnimationFrame(animate);
+renderer.setAnimationLoop(animate);
